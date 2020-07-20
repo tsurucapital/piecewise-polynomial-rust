@@ -18,7 +18,10 @@ pub trait HasDerivative {
     fn derivative(&self) -> Self::DerivativeOf;
 }
 
-pub trait HasIntegral: Evaluate {
+pub trait HasIntegral
+where
+    Self::IntegralOf: Evaluate,
+{
     type IntegralOf;
     fn indefinite(&self) -> Self::IntegralOf;
     fn integral(&self, knot: Knot) -> Self::IntegralOf;
@@ -55,6 +58,22 @@ impl HasDerivative for Poly0 {
         Poly0(0.0)
     }
 }
+impl Translate for Poly0 {
+    fn translate(&self, v: f64) -> Self {
+        Poly0(self.0 + v)
+    }
+}
+impl HasIntegral for Poly0 {
+    type IntegralOf = Poly1;
+    fn indefinite(&self) -> Self::IntegralOf {
+        let dst = [0.0, self.0];
+        Poly1(dst)
+    }
+    fn integral(&self, knot: Knot) -> Self::IntegralOf {
+        let indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x))
+    }
+}
 
 #[derive(Debug, PartialEq)]
 pub struct Poly1(pub [f64; 2]);
@@ -67,6 +86,24 @@ impl HasDerivative for Poly1 {
     type DerivativeOf = Poly0;
     fn derivative(&self) -> Self::DerivativeOf {
         Poly0(self.0[1])
+    }
+}
+impl Translate for Poly1 {
+    fn translate(&self, v: f64) -> Self {
+        let mut dst = self.0;
+        dst[0] += v;
+        Poly1(dst)
+    }
+}
+impl HasIntegral for Poly1 {
+    type IntegralOf = Poly2;
+    fn indefinite(&self) -> Self::IntegralOf {
+        let dst = [0.0, self.0[0], self.0[1] / 2.0];
+        Poly2(dst)
+    }
+    fn integral(&self, knot: Knot) -> Self::IntegralOf {
+        let indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x))
     }
 }
 
@@ -85,6 +122,24 @@ impl HasDerivative for Poly2 {
         Poly1(dst)
     }
 }
+impl Translate for Poly2 {
+    fn translate(&self, v: f64) -> Self {
+        let mut dst = self.0;
+        dst[0] += v;
+        Poly2(dst)
+    }
+}
+impl HasIntegral for Poly2 {
+    type IntegralOf = Poly3;
+    fn indefinite(&self) -> Self::IntegralOf {
+        let dst = [0.0, self.0[0], self.0[1] / 2.0, self.0[2] / 3.0];
+        Poly3(dst)
+    }
+    fn integral(&self, knot: Knot) -> Self::IntegralOf {
+        let indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x))
+    }
+}
 
 #[derive(Debug, PartialEq)]
 pub struct Poly3(pub [f64; 4]);
@@ -101,6 +156,30 @@ impl HasDerivative for Poly3 {
         Poly2(dst)
     }
 }
+impl Translate for Poly3 {
+    fn translate(&self, v: f64) -> Self {
+        let mut dst = self.0;
+        dst[0] += v;
+        Poly3(dst)
+    }
+}
+impl HasIntegral for Poly3 {
+    type IntegralOf = Poly4;
+    fn indefinite(&self) -> Self::IntegralOf {
+        let dst = [
+            0.0,
+            self.0[0],
+            self.0[1] / 2.0,
+            self.0[2] / 3.0,
+            self.0[3] / 4.0,
+        ];
+        Poly4(dst)
+    }
+    fn integral(&self, knot: Knot) -> Self::IntegralOf {
+        let indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x))
+    }
+}
 
 #[derive(Debug, PartialEq)]
 pub struct Poly4(pub [f64; 5]);
@@ -115,6 +194,31 @@ impl HasDerivative for Poly4 {
         let coeffs = self.0;
         let dst = [coeffs[1], 2.0 * coeffs[2], 3.0 * coeffs[3], 4.0 * coeffs[4]];
         Poly3(dst)
+    }
+}
+impl Translate for Poly4 {
+    fn translate(&self, v: f64) -> Self {
+        let mut dst = self.0;
+        dst[0] += v;
+        Poly4(dst)
+    }
+}
+impl HasIntegral for Poly4 {
+    type IntegralOf = Poly5;
+    fn indefinite(&self) -> Self::IntegralOf {
+        let dst = [
+            0.0,
+            self.0[0],
+            self.0[1] / 2.0,
+            self.0[2] / 3.0,
+            self.0[3] / 4.0,
+            self.0[4] / 5.0,
+        ];
+        Poly5(dst)
+    }
+    fn integral(&self, knot: Knot) -> Self::IntegralOf {
+        let indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x))
     }
 }
 
@@ -137,6 +241,32 @@ impl HasDerivative for Poly5 {
             5.0 * coeffs[5],
         ];
         Poly4(dst)
+    }
+}
+impl Translate for Poly5 {
+    fn translate(&self, v: f64) -> Self {
+        let mut dst = self.0;
+        dst[0] += v;
+        Poly5(dst)
+    }
+}
+impl HasIntegral for Poly5 {
+    type IntegralOf = Poly6;
+    fn indefinite(&self) -> Self::IntegralOf {
+        let dst = [
+            0.0,
+            self.0[0],
+            self.0[1] / 2.0,
+            self.0[2] / 3.0,
+            self.0[3] / 4.0,
+            self.0[4] / 5.0,
+            self.0[5] / 6.0,
+        ];
+        Poly6(dst)
+    }
+    fn integral(&self, knot: Knot) -> Self::IntegralOf {
+        let indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x))
     }
 }
 
@@ -162,6 +292,33 @@ impl HasDerivative for Poly6 {
         Poly5(dst)
     }
 }
+impl Translate for Poly6 {
+    fn translate(&self, v: f64) -> Self {
+        let mut dst = self.0;
+        dst[0] += v;
+        Poly6(dst)
+    }
+}
+impl HasIntegral for Poly6 {
+    type IntegralOf = Poly7;
+    fn indefinite(&self) -> Self::IntegralOf {
+        let dst = [
+            0.0,
+            self.0[0],
+            self.0[1] / 2.0,
+            self.0[2] / 3.0,
+            self.0[3] / 4.0,
+            self.0[4] / 5.0,
+            self.0[5] / 6.0,
+            self.0[6] / 7.0,
+        ];
+        Poly7(dst)
+    }
+    fn integral(&self, knot: Knot) -> Self::IntegralOf {
+        let indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x))
+    }
+}
 
 #[derive(Debug, PartialEq)]
 pub struct Poly7(pub [f64; 8]);
@@ -184,6 +341,34 @@ impl HasDerivative for Poly7 {
             7.0 * coeffs[7],
         ];
         Poly6(dst)
+    }
+}
+impl Translate for Poly7 {
+    fn translate(&self, v: f64) -> Self {
+        let mut dst = self.0;
+        dst[0] += v;
+        Poly7(dst)
+    }
+}
+impl HasIntegral for Poly7 {
+    type IntegralOf = Poly8;
+    fn indefinite(&self) -> Self::IntegralOf {
+        let dst = [
+            0.0,
+            self.0[0],
+            self.0[1] / 2.0,
+            self.0[2] / 3.0,
+            self.0[3] / 4.0,
+            self.0[4] / 5.0,
+            self.0[5] / 6.0,
+            self.0[6] / 7.0,
+            self.0[7] / 8.0,
+        ];
+        Poly8(dst)
+    }
+    fn integral(&self, knot: Knot) -> Self::IntegralOf {
+        let indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x))
     }
 }
 
@@ -211,6 +396,13 @@ impl HasDerivative for Poly8 {
         Poly7(dst)
     }
 }
+impl Translate for Poly8 {
+    fn translate(&self, v: f64) -> Self {
+        let mut dst = self.0;
+        dst[0] += v;
+        Poly8(dst)
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -232,6 +424,20 @@ mod tests {
     }
 
     #[test]
+    fn translate_poly0() {
+        let poly = Poly0(7.0);
+        let result = Poly0(14.0);
+        assert_eq!(poly.translate(7.0), result);
+    }
+
+    #[test]
+    fn integral_poly0() {
+        let poly = Poly0(7.0);
+        let result = Poly1([-9.0, 7.0]);
+        assert_eq!(poly.integral(Knot { x: 2.0, y: 5.0 }), result);
+    }
+
+    #[test]
     fn evaluate_poly1() {
         let poly = Poly1([7.0, 3.0]);
         let v = 17.0;
@@ -243,6 +449,20 @@ mod tests {
         let poly = Poly1([7.0, 3.0]);
         let result = Poly0(3.0);
         assert_eq!(poly.derivative(), result);
+    }
+
+    #[test]
+    fn translate_poly1() {
+        let poly = Poly1([7.0, 3.0]);
+        let result = Poly1([14.0, 3.0]);
+        assert_eq!(poly.translate(7.0), result);
+    }
+
+    #[test]
+    fn integral_poly1() {
+        let poly = Poly1([7.0, 3.0]);
+        let result = Poly2([-15.0, 7.0, 1.5]);
+        assert_eq!(poly.integral(Knot { x: 2.0, y: 5.0 }), result);
     }
 
     #[test]
@@ -260,6 +480,20 @@ mod tests {
     }
 
     #[test]
+    fn translate_poly2() {
+        let poly = Poly2([7.0, 3.0, 9.0]);
+        let result = Poly2([14.0, 3.0, 9.0]);
+        assert_eq!(poly.translate(7.0), result);
+    }
+
+    #[test]
+    fn integral_poly2() {
+        let poly = Poly2([7.0, 3.0, 9.0]);
+        let result = Poly3([-39.0, 7.0, 1.5, 3.0]);
+        assert_eq!(poly.integral(Knot { x: 2.0, y: 5.0 }), result);
+    }
+
+    #[test]
     fn evaluate_poly3() {
         let poly = Poly3([7.0, 3.0, 9.0, 8.0]);
         let v = 3.0;
@@ -271,6 +505,20 @@ mod tests {
         let poly = Poly3([7.0, 3.0, 9.0, 8.0]);
         let result = Poly2([3.0, 18.0, 24.0]);
         assert_eq!(poly.derivative(), result);
+    }
+
+    #[test]
+    fn translate_poly3() {
+        let poly = Poly3([7.0, 3.0, 9.0, 8.0]);
+        let result = Poly3([14.0, 3.0, 9.0, 8.0]);
+        assert_eq!(poly.translate(7.0), result);
+    }
+
+    #[test]
+    fn integral_poly3() {
+        let poly = Poly3([7.0, 3.0, 9.0, 8.0]);
+        let result = Poly4([-71.0, 7.0, 1.5, 3.0, 2.0]);
+        assert_eq!(poly.integral(Knot { x: 2.0, y: 5.0 }), result);
     }
 
     #[test]
@@ -288,6 +536,20 @@ mod tests {
     }
 
     #[test]
+    fn translate_poly4() {
+        let poly = Poly4([7.0, 3.0, 9.0, 8.0, 6.0]);
+        let result = Poly4([14.0, 3.0, 9.0, 8.0, 6.0]);
+        assert_eq!(poly.translate(7.0), result);
+    }
+
+    #[test]
+    fn integral_poly4() {
+        let poly = Poly4([7.0, 3.0, 9.0, 8.0, 6.0]);
+        let result = Poly5([-109.4, 7.0, 1.5, 3.0, 2.0, 1.2]);
+        assert_eq!(poly.integral(Knot { x: 2.0, y: 5.0 }), result);
+    }
+
+    #[test]
     fn evaluate_poly5() {
         let poly = Poly5([7.0, 3.0, 9.0, 8.0, 6.0, 1.5]);
         let v = 3.0;
@@ -299,6 +561,20 @@ mod tests {
         let poly = Poly5([7.0, 3.0, 9.0, 8.0, 6.0, 1.5]);
         let result = Poly4([3.0, 18.0, 24.0, 24.0, 7.5]);
         assert_eq!(poly.derivative(), result);
+    }
+
+    #[test]
+    fn translate_poly5() {
+        let poly = Poly5([7.0, 3.0, 9.0, 8.0, 6.0, 1.5]);
+        let result = Poly5([14.0, 3.0, 9.0, 8.0, 6.0, 1.5]);
+        assert_eq!(poly.translate(7.0), result);
+    }
+
+    #[test]
+    fn integral_poly5() {
+        let poly = Poly5([7.0, 3.0, 9.0, 8.0, 6.0, 1.5]);
+        let result = Poly6([-125.4, 7.0, 1.5, 3.0, 2.0, 1.2, 0.25]);
+        assert_eq!(poly.integral(Knot { x: 2.0, y: 5.0 }), result);
     }
 
     #[test]
@@ -316,6 +592,20 @@ mod tests {
     }
 
     #[test]
+    fn translate_poly6() {
+        let poly = Poly6([7.0, 3.0, 9.0, 8.0, 6.0, 1.5, 3.5]);
+        let result = Poly6([14.0, 3.0, 9.0, 8.0, 6.0, 1.5, 3.5]);
+        assert_eq!(poly.translate(7.0), result);
+    }
+
+    #[test]
+    fn integral_poly6() {
+        let poly = Poly6([7.0, 3.0, 9.0, 8.0, 6.0, 1.5, 3.5]);
+        let result = Poly7([-189.4, 7.0, 1.5, 3.0, 2.0, 1.2, 0.25, 0.5]);
+        assert_eq!(poly.integral(Knot { x: 2.0, y: 5.0 }), result);
+    }
+
+    #[test]
     fn evaluate_poly7() {
         let poly = Poly7([7.0, 3.0, 9.0, 8.0, 6.0, 1.5, 3.5, 4.5]);
         let v = 3.0;
@@ -330,6 +620,20 @@ mod tests {
     }
 
     #[test]
+    fn translate_poly7() {
+        let poly = Poly7([7.0, 3.0, 9.0, 8.0, 6.0, 1.5, 3.5, 4.5]);
+        let result = Poly7([14.0, 3.0, 9.0, 8.0, 6.0, 1.5, 3.5, 4.5]);
+        assert_eq!(poly.translate(7.0), result);
+    }
+
+    #[test]
+    fn integral_poly7() {
+        let poly = Poly7([7.0, 3.0, 9.0, 8.0, 6.0, 1.5, 3.5, 4.5]);
+        let result = Poly8([-333.4, 7.0, 1.5, 3.0, 2.0, 1.2, 0.25, 0.5, 0.5625]);
+        assert_eq!(poly.integral(Knot { x: 2.0, y: 5.0 }), result);
+    }
+
+    #[test]
     fn evaluate_poly8() {
         let poly = Poly8([7.0, 3.0, 9.0, 8.0, 6.0, 1.5, 3.5, 4.5, 9.0]);
         let v = 3.0;
@@ -341,5 +645,12 @@ mod tests {
         let poly = Poly8([7.0, 3.0, 9.0, 8.0, 6.0, 1.5, 3.5, 4.5, 9.0]);
         let result = Poly7([3.0, 18.0, 24.0, 24.0, 7.5, 21.0, 31.5, 72.0]);
         assert_eq!(poly.derivative(), result);
+    }
+
+    #[test]
+    fn translate_poly8() {
+        let poly = Poly8([7.0, 3.0, 9.0, 8.0, 6.0, 1.5, 3.5, 4.5, 9.0]);
+        let result = Poly8([14.0, 3.0, 9.0, 8.0, 6.0, 1.5, 3.5, 4.5, 9.0]);
+        assert_eq!(poly.translate(7.0), result);
     }
 }
