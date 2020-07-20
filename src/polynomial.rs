@@ -1,3 +1,6 @@
+use std::default::Default;
+use std::ops::{Add, Mul, Neg};
+
 pub struct Knot {
     pub x: f64,
     pub y: f64,
@@ -75,6 +78,31 @@ impl HasIntegral for Poly0 {
     }
 }
 
+impl Mul<f64> for Poly0 {
+    type Output = Self;
+    fn mul(self, rhs: f64) -> Self {
+        Poly0(self.0 * rhs)
+    }
+}
+impl Neg for Poly0 {
+    type Output = Self;
+    fn neg(self) -> Self {
+        self * -1.0
+    }
+}
+impl Add for Poly0 {
+    type Output = Self;
+    fn add(self, other: Self) -> Self {
+        Poly0(self.0 + other.0)
+    }
+}
+
+impl Default for Poly0 {
+    fn default() -> Self {
+        Poly0(0.0)
+    }
+}
+
 #[derive(Debug, PartialEq)]
 pub struct Poly1(pub [f64; 2]);
 impl Evaluate for Poly1 {
@@ -104,6 +132,29 @@ impl HasIntegral for Poly1 {
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x))
+    }
+}
+impl Mul<f64> for Poly1 {
+    type Output = Self;
+    fn mul(self, rhs: f64) -> Self {
+        Poly1([self.0[0] * rhs, self.0[1] * rhs])
+    }
+}
+impl Neg for Poly1 {
+    type Output = Self;
+    fn neg(self) -> Self {
+        self * -1.0
+    }
+}
+impl Add for Poly1 {
+    type Output = Self;
+    fn add(self, other: Self) -> Self {
+        Poly1([self.0[0] + other.0[0], self.0[1] + other.0[1]])
+    }
+}
+impl Default for Poly1 {
+    fn default() -> Self {
+        Poly1([0.0; 2])
     }
 }
 
@@ -138,6 +189,33 @@ impl HasIntegral for Poly2 {
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x))
+    }
+}
+impl Mul<f64> for Poly2 {
+    type Output = Self;
+    fn mul(self, rhs: f64) -> Self {
+        Poly2([self.0[0] * rhs, self.0[1] * rhs, self.0[2] * rhs])
+    }
+}
+impl Neg for Poly2 {
+    type Output = Self;
+    fn neg(self) -> Self {
+        self * -1.0
+    }
+}
+impl Add for Poly2 {
+    type Output = Self;
+    fn add(self, other: Self) -> Self {
+        Poly2([
+            self.0[0] + other.0[0],
+            self.0[1] + other.0[1],
+            self.0[2] + other.0[2],
+        ])
+    }
+}
+impl Default for Poly2 {
+    fn default() -> Self {
+        Poly2([0.0; 3])
     }
 }
 
@@ -180,6 +258,39 @@ impl HasIntegral for Poly3 {
         indef.translate(knot.y - indef.evaluate(knot.x))
     }
 }
+impl Mul<f64> for Poly3 {
+    type Output = Self;
+    fn mul(self, rhs: f64) -> Self {
+        Poly3([
+            self.0[0] * rhs,
+            self.0[1] * rhs,
+            self.0[2] * rhs,
+            self.0[3] * rhs,
+        ])
+    }
+}
+impl Neg for Poly3 {
+    type Output = Self;
+    fn neg(self) -> Self {
+        self * -1.0
+    }
+}
+impl Add for Poly3 {
+    type Output = Self;
+    fn add(self, other: Self) -> Self {
+        Poly3([
+            self.0[0] + other.0[0],
+            self.0[1] + other.0[1],
+            self.0[2] + other.0[2],
+            self.0[3] + other.0[3],
+        ])
+    }
+}
+impl Default for Poly3 {
+    fn default() -> Self {
+        Poly3([0.0; 4])
+    }
+}
 
 #[derive(Debug, PartialEq)]
 pub struct Poly4(pub [f64; 5]);
@@ -219,6 +330,41 @@ impl HasIntegral for Poly4 {
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x))
+    }
+}
+impl Mul<f64> for Poly4 {
+    type Output = Self;
+    fn mul(self, rhs: f64) -> Self {
+        Poly4([
+            self.0[0] * rhs,
+            self.0[1] * rhs,
+            self.0[2] * rhs,
+            self.0[3] * rhs,
+            self.0[4] * rhs,
+        ])
+    }
+}
+impl Neg for Poly4 {
+    type Output = Self;
+    fn neg(self) -> Self {
+        self * -1.0
+    }
+}
+impl Add for Poly4 {
+    type Output = Self;
+    fn add(self, other: Self) -> Self {
+        Poly4([
+            self.0[0] + other.0[0],
+            self.0[1] + other.0[1],
+            self.0[2] + other.0[2],
+            self.0[3] + other.0[3],
+            self.0[4] + other.0[4],
+        ])
+    }
+}
+impl Default for Poly4 {
+    fn default() -> Self {
+        Poly4([0.0; 5])
     }
 }
 
@@ -269,6 +415,43 @@ impl HasIntegral for Poly5 {
         indef.translate(knot.y - indef.evaluate(knot.x))
     }
 }
+impl Mul<f64> for Poly5 {
+    type Output = Self;
+    fn mul(self, rhs: f64) -> Self {
+        Poly5([
+            self.0[0] * rhs,
+            self.0[1] * rhs,
+            self.0[2] * rhs,
+            self.0[3] * rhs,
+            self.0[4] * rhs,
+            self.0[5] * rhs,
+        ])
+    }
+}
+impl Neg for Poly5 {
+    type Output = Self;
+    fn neg(self) -> Self {
+        self * -1.0
+    }
+}
+impl Add for Poly5 {
+    type Output = Self;
+    fn add(self, other: Self) -> Self {
+        Poly5([
+            self.0[0] + other.0[0],
+            self.0[1] + other.0[1],
+            self.0[2] + other.0[2],
+            self.0[3] + other.0[3],
+            self.0[4] + other.0[4],
+            self.0[5] + other.0[5],
+        ])
+    }
+}
+impl Default for Poly5 {
+    fn default() -> Self {
+        Poly5([0.0; 6])
+    }
+}
 
 #[derive(Debug, PartialEq)]
 pub struct Poly6(pub [f64; 7]);
@@ -317,6 +500,45 @@ impl HasIntegral for Poly6 {
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x))
+    }
+}
+impl Mul<f64> for Poly6 {
+    type Output = Self;
+    fn mul(self, rhs: f64) -> Self {
+        Poly6([
+            self.0[0] * rhs,
+            self.0[1] * rhs,
+            self.0[2] * rhs,
+            self.0[3] * rhs,
+            self.0[4] * rhs,
+            self.0[5] * rhs,
+            self.0[6] * rhs,
+        ])
+    }
+}
+impl Neg for Poly6 {
+    type Output = Self;
+    fn neg(self) -> Self {
+        self * -1.0
+    }
+}
+impl Add for Poly6 {
+    type Output = Self;
+    fn add(self, other: Self) -> Self {
+        Poly6([
+            self.0[0] + other.0[0],
+            self.0[1] + other.0[1],
+            self.0[2] + other.0[2],
+            self.0[3] + other.0[3],
+            self.0[4] + other.0[4],
+            self.0[5] + other.0[5],
+            self.0[6] + other.0[6],
+        ])
+    }
+}
+impl Default for Poly6 {
+    fn default() -> Self {
+        Poly6([0.0; 7])
     }
 }
 
@@ -371,6 +593,47 @@ impl HasIntegral for Poly7 {
         indef.translate(knot.y - indef.evaluate(knot.x))
     }
 }
+impl Mul<f64> for Poly7 {
+    type Output = Self;
+    fn mul(self, rhs: f64) -> Self {
+        Poly7([
+            self.0[0] * rhs,
+            self.0[1] * rhs,
+            self.0[2] * rhs,
+            self.0[3] * rhs,
+            self.0[4] * rhs,
+            self.0[5] * rhs,
+            self.0[6] * rhs,
+            self.0[7] * rhs,
+        ])
+    }
+}
+impl Neg for Poly7 {
+    type Output = Self;
+    fn neg(self) -> Self {
+        self * -1.0
+    }
+}
+impl Add for Poly7 {
+    type Output = Self;
+    fn add(self, other: Self) -> Self {
+        Poly7([
+            self.0[0] + other.0[0],
+            self.0[1] + other.0[1],
+            self.0[2] + other.0[2],
+            self.0[3] + other.0[3],
+            self.0[4] + other.0[4],
+            self.0[5] + other.0[5],
+            self.0[6] + other.0[6],
+            self.0[7] + other.0[7],
+        ])
+    }
+}
+impl Default for Poly7 {
+    fn default() -> Self {
+        Poly7([0.0; 8])
+    }
+}
 
 #[derive(Debug, PartialEq)]
 pub struct Poly8(pub [f64; 9]);
@@ -401,6 +664,49 @@ impl Translate for Poly8 {
         let mut dst = self.0;
         dst[0] += v;
         Poly8(dst)
+    }
+}
+impl Mul<f64> for Poly8 {
+    type Output = Self;
+    fn mul(self, rhs: f64) -> Self {
+        Poly8([
+            self.0[0] * rhs,
+            self.0[1] * rhs,
+            self.0[2] * rhs,
+            self.0[3] * rhs,
+            self.0[4] * rhs,
+            self.0[5] * rhs,
+            self.0[6] * rhs,
+            self.0[7] * rhs,
+            self.0[8] * rhs,
+        ])
+    }
+}
+impl Neg for Poly8 {
+    type Output = Self;
+    fn neg(self) -> Self {
+        self * -1.0
+    }
+}
+impl Add for Poly8 {
+    type Output = Self;
+    fn add(self, other: Self) -> Self {
+        Poly8([
+            self.0[0] + other.0[0],
+            self.0[1] + other.0[1],
+            self.0[2] + other.0[2],
+            self.0[3] + other.0[3],
+            self.0[4] + other.0[4],
+            self.0[5] + other.0[5],
+            self.0[6] + other.0[6],
+            self.0[7] + other.0[7],
+            self.0[8] + other.0[8],
+        ])
+    }
+}
+impl Default for Poly8 {
+    fn default() -> Self {
+        Poly8([0.0; 9])
     }
 }
 
