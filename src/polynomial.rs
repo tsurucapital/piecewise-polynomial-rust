@@ -48,7 +48,7 @@ pub fn evaluate_coeffs(coeffs: &[f64], v: f64) -> f64 {
         .fold(0.0, |acc, (i, e)| acc + e * v.powi(i as i32))
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Poly0(pub f64);
 impl Evaluate for Poly0 {
     fn evaluate(&self, _: f64) -> f64 {
@@ -103,7 +103,7 @@ impl Default for Poly0 {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Poly1(pub [f64; 2]);
 impl Evaluate for Poly1 {
     fn evaluate(&self, v: f64) -> f64 {
@@ -158,7 +158,7 @@ impl Default for Poly1 {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Poly2(pub [f64; 3]);
 impl Evaluate for Poly2 {
     fn evaluate(&self, v: f64) -> f64 {
@@ -219,7 +219,7 @@ impl Default for Poly2 {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Poly3(pub [f64; 4]);
 impl Evaluate for Poly3 {
     fn evaluate(&self, v: f64) -> f64 {
@@ -292,7 +292,7 @@ impl Default for Poly3 {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Poly4(pub [f64; 5]);
 impl Evaluate for Poly4 {
     fn evaluate(&self, v: f64) -> f64 {
@@ -368,7 +368,7 @@ impl Default for Poly4 {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Poly5(pub [f64; 6]);
 impl Evaluate for Poly5 {
     fn evaluate(&self, v: f64) -> f64 {
@@ -453,7 +453,7 @@ impl Default for Poly5 {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Poly6(pub [f64; 7]);
 impl Evaluate for Poly6 {
     fn evaluate(&self, v: f64) -> f64 {
@@ -542,7 +542,7 @@ impl Default for Poly6 {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Poly7(pub [f64; 8]);
 impl Evaluate for Poly7 {
     fn evaluate(&self, v: f64) -> f64 {
@@ -635,7 +635,7 @@ impl Default for Poly7 {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Poly8(pub [f64; 9]);
 impl Evaluate for Poly8 {
     fn evaluate(&self, v: f64) -> f64 {

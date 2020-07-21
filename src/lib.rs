@@ -1,3 +1,4 @@
+pub mod log_polynomial;
 pub mod polynomial;
 
 #[cfg(test)]
