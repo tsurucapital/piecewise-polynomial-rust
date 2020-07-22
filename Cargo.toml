@@ -19,3 +19,7 @@ harness = false
 [[bench]]
 name = "haskell_ref"
 harness = false
+
+[[bench]]
+name = "piecewise"
+harness = false
