@@ -162,44 +162,88 @@ impl Mul<f64> for IntOfLogPoly4 {
 
 // Hide ugly taylor expansion stuff
 mod taylor {
-    use crate::polynomial::evaluate_horners;
     fn exp_5_tail_anal(x: f64) -> f64 {
-        evaluate_horners(
-            &[
-                0.0,
-                -1.0 / 24.0,
-                -1.0 / 6.0,
-                -1.0 / 2.0,
-                -1.0,
-                x.recip().recip().exp() - 1.0,
-            ],
-            x.recip(),
-        )
+        let x = x.recip();
+
+        let c0: f64 = 0.0;
+        let c1: f64 = -1.0 / 24.0;
+        let c2: f64 = -1.0 / 6.0;
+        let c3: f64 = -1.0 / 2.0;
+        let c4: f64 = -1.0;
+        let c5: f64 = x.recip().exp() - 1.0;
+
+        let x2 = x * x;
+        let x4 = x2 * x2;
+
+        let t0 = c1.mul_add(x, c0);
+        let t1 = c3.mul_add(x, c2);
+        let t2 = c5.mul_add(x, c4);
+
+        t2.mul_add(x4, t1.mul_add(x2, t0))
     }
 
     fn exp_5_tail_taylor(x: f64) -> f64 {
-        evaluate_horners(
-            &[
-                1.0 / 120.0,
-                1.0 / 720.0,
-                1.0 / 5040.0,
-                1.0 / 40320.0,
-                1.0 / 362880.0,
-                1.0 / 3628800.0,
-                1.0 / 39916800.0,
-                1.0 / 479001600.0,
-                1.0 / 6227020800.0,
-                1.0 / 87178291200.0,
-                1.0 / 1307674368000.0,
-                1.0 / 20922789888000.0,
-                1.0 / 355687428096000.0,
-                1.0 / 6402373705728000.0,
-                1.0 / 121645100408832000.0,
-                1.0 / 2432902008176640000.0,
-                0.0,
-            ],
-            x,
-        )
+        // (((C0+C1x) + (C2+C3x)x2) + ((C4+C5x) + (C6+C7x)x2)x4) + (((C8+C9x) + (C10+C11x)x2) + ((C12+C13x) + (C14+C15x)x2)x4)x8
+        let c0: f64 = 1.0 / 120.0;
+        let c1: f64 = 1.0 / 720.0;
+        let c2: f64 = 1.0 / 5040.0;
+        let c3: f64 = 1.0 / 40320.0;
+        let c4: f64 = 1.0 / 362880.0;
+        let c5: f64 = 1.0 / 3628800.0;
+        let c6: f64 = 1.0 / 39916800.0;
+        let c7: f64 = 1.0 / 479001600.0;
+        let c8: f64 = 1.0 / 6227020800.0;
+        let c9: f64 = 1.0 / 87178291200.0;
+        let c10: f64 = 1.0 / 1307674368000.0;
+        let c11: f64 = 1.0 / 20922789888000.0;
+        let c12: f64 = 1.0 / 355687428096000.0;
+        let c13: f64 = 1.0 / 6402373705728000.0;
+        let c14: f64 = 1.0 / 121645100408832000.0;
+        let c15: f64 = 1.0 / 2432902008176640000.0;
+
+        // Start with
+        //
+        //   (((C0+C1x) + (C2+C3x)x2) + ((C4+C5x) + (C6+C7x)x2)x4)
+        // + (((C8+C9x) + (C10+C11x)x2) + ((C12+C13x) + (C14+C15x)x2)x4)x8
+
+        // Smallest individual terms
+        let t0 = c1.mul_add(x, c0);
+        let t1 = c3.mul_add(x, c2);
+        let t2 = c5.mul_add(x, c4);
+        let t3 = c7.mul_add(x, c6);
+        let t4 = c9.mul_add(x, c8);
+        let t5 = c11.mul_add(x, c10);
+        let t6 = c13.mul_add(x, c12);
+        let t7 = c15.mul_add(x, c14);
+
+        // We now have
+        //
+        //   ((t0 + t1x2) + (t2 + t3x2)x4)
+        // + ((t4 + t5x2) + (t6 + t7x2)x4)x8
+
+        let x2 = x * x;
+        // Reduce top and bottom row terms
+        let top_l = t1.mul_add(x2, t0);
+        let top_r = t3.mul_add(x2, t2);
+        let bot_l = t5.mul_add(x2, t4);
+        let bot_r = t7.mul_add(x2, t6);
+
+        // We now have
+        //
+        //   (top_l + top_rx4)
+        // + (bot_l + bot_rx4)x8
+
+        let x4 = x2 * x2;
+        // Reduce the top and bottom completely
+        let top = top_r.mul_add(x4, top_l);
+        let bot = bot_r.mul_add(x4, bot_l);
+
+        // We know have
+        //
+        // top + botx8
+        let x8 = x4 * x4;
+        // Final reduce, the answer.
+        bot.mul_add(x8, top)
     }
 
     pub fn exp_5_taylor(x: f64) -> f64 {
@@ -237,19 +281,26 @@ mod taylor {
 impl Evaluate for IntOfLogPoly4 {
     fn evaluate(&self, v: f64) -> f64 {
         let x = v.ln().neg();
-        let cr = evaluate_horners(
-            &[
-                0.0,
-                self.coeffs[0],
-                self.coeffs[1],
-                self.coeffs[2],
-                self.coeffs[3],
-                self.u * crate::log_polynomial::taylor::exp_5_taylor(x),
-            ],
-            x,
-        );
 
-        self.k + v * cr
+        let cr = {
+            let c0: f64 = 0.0;
+            let c1: f64 = self.coeffs[0];
+            let c2: f64 = self.coeffs[1];
+            let c3: f64 = self.coeffs[2];
+            let c4: f64 = self.coeffs[3];
+            let c5: f64 = self.u * crate::log_polynomial::taylor::exp_5_taylor(x);
+
+            let t0 = c1.mul_add(x, c0);
+            let t1 = c3.mul_add(x, c2);
+            let t2 = c5.mul_add(x, c4);
+
+            let x2 = x * x;
+            let x4 = x2 * x2;
+
+            t2.mul_add(x4, t1.mul_add(x2, t0))
+        };
+
+        v.mul_add(cr, self.k)
     }
 }
 
