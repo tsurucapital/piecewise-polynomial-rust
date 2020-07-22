@@ -37,16 +37,21 @@ pub trait Translate {
 }
 
 #[inline]
-pub fn evaluate_coeffs(coeffs: &[f64], v: f64) -> f64 {
-    // Multiplying degree via `powi` seems mildly better than what we
-    // did in original Haskell code which was to multiply the `v` into
-    // the accumulator as we went: this is because this allows us to
-    // do the instructions in parallel without having to wait before
-    // processing each elemnt. I think.
-    coeffs
-        .iter()
-        .enumerate()
-        .fold(0.0, |acc, (i, e)| acc + e * v.powi(i as i32))
+/// For our polynomials, we use manually unrolled Estin's scheme
+/// (manually unrolled simply because it's easier than making general
+/// implementation that's going to inline well). However, if you have
+/// some collection of coefficients of your own, I provide FMA-enabled
+/// Horner's scheme which performs fairly closely.
+pub fn evaluate_horners<'a, I>(coeffs: I, v: f64) -> f64
+where
+    I: IntoIterator<Item = &'a f64>,
+    <I as IntoIterator>::IntoIter: DoubleEndedIterator,
+{
+    let mut iter = coeffs.into_iter().rev();
+    match iter.next() {
+        None => return 0.0,
+        Some(&first) => iter.fold(first, |acc, &e| acc.mul_add(v, e)),
+    }
 }
 
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -107,8 +112,9 @@ impl Default for Poly0 {
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Poly1(pub [f64; 2]);
 impl Evaluate for Poly1 {
-    fn evaluate(&self, v: f64) -> f64 {
-        evaluate_coeffs(&self.0, v)
+    fn evaluate(&self, x: f64) -> f64 {
+        let c = self.0;
+        c[1].mul_add(x, c[0])
     }
 }
 impl HasDerivative for Poly1 {
@@ -162,8 +168,10 @@ impl Default for Poly1 {
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Poly2(pub [f64; 3]);
 impl Evaluate for Poly2 {
-    fn evaluate(&self, v: f64) -> f64 {
-        evaluate_coeffs(&self.0, v)
+    fn evaluate(&self, x: f64) -> f64 {
+        let x2 = x * x;
+        let c = self.0;
+        c[2].mul_add(x2, c[1].mul_add(x, c[0]))
     }
 }
 impl HasDerivative for Poly2 {
@@ -223,8 +231,15 @@ impl Default for Poly2 {
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Poly3(pub [f64; 4]);
 impl Evaluate for Poly3 {
-    fn evaluate(&self, v: f64) -> f64 {
-        evaluate_coeffs(&self.0, v)
+    fn evaluate(&self, x: f64) -> f64 {
+        // P3(x) = (C0 + C1x) + (C2 + C3x) x2
+        let x2 = x * x;
+        let c = self.0;
+
+        let t0 = c[1].mul_add(x, c[0]);
+        let t1 = c[3].mul_add(x, c[2]);
+
+        t1.mul_add(x2, t0)
     }
 }
 impl HasDerivative for Poly3 {
@@ -296,8 +311,17 @@ impl Default for Poly3 {
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Poly4(pub [f64; 5]);
 impl Evaluate for Poly4 {
-    fn evaluate(&self, v: f64) -> f64 {
-        evaluate_coeffs(&self.0, v)
+    fn evaluate(&self, x: f64) -> f64 {
+        // P4(x) = (C0 + C1x) + (C2 + C3x) x2 + C4x4
+        let x2 = x * x;
+        let x4 = x2 * x2;
+        let c = self.0;
+
+        let t0 = c[1].mul_add(x, c[0]);
+        let t1 = c[3].mul_add(x, c[2]);
+        let t2 = c[4];
+
+        t2.mul_add(x4, t1.mul_add(x2, t0))
     }
 }
 impl HasDerivative for Poly4 {
@@ -372,8 +396,17 @@ impl Default for Poly4 {
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Poly5(pub [f64; 6]);
 impl Evaluate for Poly5 {
-    fn evaluate(&self, v: f64) -> f64 {
-        evaluate_coeffs(&self.0, v)
+    fn evaluate(&self, x: f64) -> f64 {
+        // P5(x) = (C0 + C1x) + (C2 + C3x) x2 + (C4 + C5x) x4
+        let x2 = x * x;
+        let x4 = x2 * x2;
+        let c = self.0;
+
+        let t0 = c[1].mul_add(x, c[0]);
+        let t1 = c[3].mul_add(x, c[2]);
+        let t2 = c[5].mul_add(x, c[4]);
+
+        t2.mul_add(x4, t1.mul_add(x2, t0))
     }
 }
 impl HasDerivative for Poly5 {
@@ -457,8 +490,17 @@ impl Default for Poly5 {
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Poly6(pub [f64; 7]);
 impl Evaluate for Poly6 {
-    fn evaluate(&self, v: f64) -> f64 {
-        evaluate_coeffs(&self.0, v)
+    fn evaluate(&self, x: f64) -> f64 {
+        // P6(x) = (C0 + C1x) + (C2 + C3x) x2 + ((C4 + C5x) + C6x2)x4
+        let x2 = x * x;
+        let x4 = x2 * x2;
+        let c = self.0;
+
+        let t0 = c[1].mul_add(x, c[0]);
+        let t1 = c[3].mul_add(x, c[2]);
+        let t2 = c[6].mul_add(x2, c[5].mul_add(x, c[4]));
+
+        t2.mul_add(x4, t1.mul_add(x2, t0))
     }
 }
 impl HasDerivative for Poly6 {
@@ -546,8 +588,17 @@ impl Default for Poly6 {
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Poly7(pub [f64; 8]);
 impl Evaluate for Poly7 {
-    fn evaluate(&self, v: f64) -> f64 {
-        evaluate_coeffs(&self.0, v)
+    fn evaluate(&self, x: f64) -> f64 {
+        // P7(x) = (C0 + C1x) + (C2 + C3x) x2 + ((C4 + C5x) + (C6 + C7x) x2)x4
+        let x2 = x * x;
+        let x4 = x2 * x2;
+        let c = self.0;
+
+        let t0 = c[1].mul_add(x, c[0]);
+        let t1 = c[3].mul_add(x, c[2]);
+        let t2 = (c[7].mul_add(x, c[6])).mul_add(x2, c[5].mul_add(x, c[4]));
+
+        t2.mul_add(x4, t1.mul_add(x2, t0))
     }
 }
 impl HasDerivative for Poly7 {
@@ -639,10 +690,22 @@ impl Default for Poly7 {
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Poly8(pub [f64; 9]);
 impl Evaluate for Poly8 {
-    fn evaluate(&self, v: f64) -> f64 {
-        evaluate_coeffs(&self.0, v)
+    fn evaluate(&self, x: f64) -> f64 {
+        // P8(x) = (C0 + C1x) + (C2 + C3x) x2 + ((C4 + C5x) + (C6 + C7x) x2)x4 + C8x8
+        let x2 = x * x;
+        let x4 = x2 * x2;
+        let x8 = x4 * x4;
+        let c = self.0;
+
+        let t0 = c[1].mul_add(x, c[0]);
+        let t1 = c[3].mul_add(x, c[2]);
+        let t2 = (c[7].mul_add(x, c[6])).mul_add(x2, c[5].mul_add(x, c[4]));
+        let t3 = c[8];
+
+        t3.mul_add(x8, t2.mul_add(x4, t1.mul_add(x2, t0)))
     }
 }
+
 impl HasDerivative for Poly8 {
     type DerivativeOf = Poly7;
     fn derivative(&self) -> Self::DerivativeOf {

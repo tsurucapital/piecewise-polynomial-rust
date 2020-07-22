@@ -1142,6 +1142,6 @@ mod tests {
                 },
             ],
         };
-        assert_approx_eq!(poly.evaluate(7.0), 4625.849700383507, 1e-12);
+        assert_approx_eq!(poly.evaluate(7.0), 4625.849700383507, 1e-10);
     }
 }

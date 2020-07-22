@@ -162,9 +162,9 @@ impl Mul<f64> for IntOfLogPoly4 {
 
 // Hide ugly taylor expansion stuff
 mod taylor {
-    use crate::polynomial::evaluate_coeffs;
+    use crate::polynomial::evaluate_horners;
     fn exp_5_tail_anal(x: f64) -> f64 {
-        evaluate_coeffs(
+        evaluate_horners(
             &[
                 0.0,
                 -1.0 / 24.0,
@@ -178,7 +178,7 @@ mod taylor {
     }
 
     fn exp_5_tail_taylor(x: f64) -> f64 {
-        evaluate_coeffs(
+        evaluate_horners(
             &[
                 1.0 / 120.0,
                 1.0 / 720.0,
@@ -237,7 +237,7 @@ mod taylor {
 impl Evaluate for IntOfLogPoly4 {
     fn evaluate(&self, v: f64) -> f64 {
         let x = v.ln().neg();
-        let cr = evaluate_coeffs(
+        let cr = evaluate_horners(
             &[
                 0.0,
                 self.coeffs[0],
