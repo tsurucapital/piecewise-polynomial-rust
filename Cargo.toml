@@ -23,3 +23,6 @@ harness = false
 [[bench]]
 name = "piecewise"
 harness = false
+
+[profile.bench]
+debug = true
