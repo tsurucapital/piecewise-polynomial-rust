@@ -12,7 +12,7 @@ in mkShell {
   buildInputs = [
     rustChannel.rust
     # Dev tools
-    cargo-asm linuxPackages.perf valgrind kcachegrind
+    cargo-asm linuxPackages.perf valgrind kcachegrind graphviz
   ];
   # Required by test-suite and in general let's set a uniform one.
   LANG="C.UTF-8";
