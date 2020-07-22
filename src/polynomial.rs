@@ -1,6 +1,7 @@
 use std::default::Default;
 use std::ops::{Add, Mul, Neg};
 
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Knot {
     pub x: f64,
     pub y: f64,
