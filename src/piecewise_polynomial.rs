@@ -1,8 +1,6 @@
 use crate::polynomial::*;
 use std::cmp::Ordering;
-use std::default::Default;
 use std::ops::{Add, Mul, Neg};
-use std::vec::Vec;
 
 /// A 'Segment' of a piecewise 'Polynomial', valid for /begin/ ≤ @x@ <
 /// @seg_end@, where /begin/ is implicit from the previous segment, if

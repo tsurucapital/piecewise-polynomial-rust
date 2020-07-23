@@ -1,6 +1,5 @@
 use crate::piecewise_polynomial::*;
 use crate::polynomial::*;
-use std::vec::Vec;
 
 // Seems slow.
 pub fn linear(knots: Vec<Knot>) -> Piecewise<Poly1> {

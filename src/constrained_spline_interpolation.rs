@@ -1,9 +1,9 @@
 //! Constrained Cubic Splines: Taken from “Constrained Cubic Spline
 //! Interpolation for Chemical Engineering Applications” by CJC
 //! Kruger.
+
 use crate::piecewise_polynomial::*;
 use crate::polynomial::*;
-use std::vec::Vec;
 
 pub fn constrained_spline(ks0n: Vec<Knot>) -> Piecewise<Poly3> {
     assert!(ks0n.len() >= 3, "need at least 3 knots");

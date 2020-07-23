@@ -1,4 +1,3 @@
-use std::default::Default;
 use std::ops::{Add, Mul, Neg};
 
 #[derive(Debug, PartialEq, Clone, Copy)]

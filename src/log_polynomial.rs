@@ -1,6 +1,5 @@
 use crate::polynomial::*;
 use crate::polynomial::{Evaluate, HasIntegral, Translate};
-use std::default::Default;
 use std::ops::{Add, Mul, Neg};
 
 /// Polynomial of natural log of x.
