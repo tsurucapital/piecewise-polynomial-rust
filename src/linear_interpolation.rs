@@ -1,11 +1,11 @@
 use crate::piecewise_polynomial::*;
 use crate::polynomial::*;
 
-// Seems slow.
-pub fn linear(knots: Vec<Knot>) -> Piecewise<Poly1> {
+#[inline]
+pub fn linear(knots: &[Knot]) -> Piecewise<Poly1> {
     assert!(knots.len() >= 2, "need at least 2 knots");
 
-    let mut knots_iter = knots.into_iter();
+    let mut knots_iter = knots.iter().cloned();
     // We checked that there are some knots, this should never fail.
     let mut prev_knot = knots_iter.next().unwrap();
 
@@ -71,7 +71,7 @@ mod tests {
                 },
             ],
         };
-        assert_eq!(linear(knots), result);
+        assert_eq!(linear(&knots), result);
     }
 
     #[test]
@@ -114,7 +114,7 @@ mod tests {
                 },
             ],
         };
-        assert_eq!(linear(knots), result);
+        assert_eq!(linear(&knots), result);
     }
 
     #[test]
@@ -156,6 +156,6 @@ mod tests {
                 },
             ],
         };
-        assert_eq!(linear(knots), result);
+        assert_eq!(linear(&knots), result);
     }
 }
