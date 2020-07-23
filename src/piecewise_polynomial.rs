@@ -1,4 +1,5 @@
 use crate::polynomial::*;
+use arbitrary::Arbitrary;
 use std::cmp::Ordering;
 use std::iter;
 use std::ops::{Add, Mul, Neg};
@@ -105,6 +106,26 @@ impl<T> Segment<T> {
 #[derive(Debug, PartialEq, Clone)]
 pub struct Piecewise<T> {
     pub segments: Vec<Segment<T>>,
+}
+
+impl<T: Arbitrary> Arbitrary for Piecewise<T> {
+    fn arbitrary(u: &mut arbitrary::Unstructured) -> arbitrary::Result<Self> {
+        let mut ends = Vec::<f64>::arbitrary(u)?;
+        if !ends.iter().all(|x| x.is_normal()) {
+            return Err(arbitrary::Error::IncorrectFormat);
+        }
+        ends.sort_by(|x, y| x.partial_cmp(y).unwrap());
+        let segments = ends
+            .into_iter()
+            .map(|end| {
+                Ok(Segment {
+                    end,
+                    poly: T::arbitrary(u)?,
+                })
+            })
+            .collect::<arbitrary::Result<Vec<_>>>()?;
+        Ok(Piecewise { segments })
+    }
 }
 
 impl<T> Default for Piecewise<T> {
