@@ -122,8 +122,10 @@ impl<T> Segment<T> {
 /// guarantees that the function is smooth at the knots - the user must
 /// ensure this for themself.
 ///
-/// The following invariant must hold for all i: `segments[i].end <
-/// segments[i+1].end`.
+/// The following invariants must hold:
+///
+/// * there is at least one segment
+/// * for all i: `segments[i].end < segments[i+1].end`
 #[derive(Debug, PartialEq, Clone)]
 pub struct Piecewise<T> {
     pub segments: Vec<Segment<T>>,
@@ -132,7 +134,7 @@ pub struct Piecewise<T> {
 impl<T: Arbitrary> Arbitrary for Piecewise<T> {
     fn arbitrary(u: &mut arbitrary::Unstructured) -> arbitrary::Result<Self> {
         let mut ends = Vec::<f64>::arbitrary(u)?;
-        if !ends.iter().all(|x| x.is_normal()) {
+        if ends.is_empty() || !ends.iter().all(|x| x.is_normal()) {
             return Err(arbitrary::Error::IncorrectFormat);
         }
         ends.sort_by(|x, y| x.partial_cmp(y).unwrap());
