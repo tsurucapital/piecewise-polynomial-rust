@@ -1,4 +1,5 @@
 use arbitrary::Arbitrary;
+use std::iter;
 use std::ops::{Add, Mul, Neg};
 
 /// A join-point between two functions
@@ -52,6 +53,15 @@ impl Evaluate for PolyN {
         match iter.next() {
             None => 0.0,
             Some(&first) => iter.fold(first, |acc, &e| acc.mul_add(x, e)),
+        }
+    }
+}
+impl Translate for PolyN {
+    fn translate(&self, v: f64) -> Self {
+        let mut coeffs = self.0.iter().copied();
+        match coeffs.next() {
+            None => PolyN(vec![v]),
+            Some(x0) => PolyN(iter::once(x0 + v).chain(coeffs).collect()),
         }
     }
 }
