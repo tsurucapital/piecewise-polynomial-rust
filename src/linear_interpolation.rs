@@ -8,18 +8,16 @@ pub fn linear(knots: Vec<Knot>) -> Piecewise<Poly1> {
 
     let mut knots_iter = knots.into_iter();
     // We checked that there are some knots, this should never fail.
-    // Note that the knot is now no longer in the stream: that's fine,
-    // we'll "insert" it back in a scan soon enough.
-    let first_knot = knots_iter.next().unwrap();
+    let mut prev_knot = knots_iter.next().unwrap();
 
     let segments = knots_iter
         // Force X co-ordinates to have increasing values.
-        .scan(first_knot, incr_linear)
+        .map(|k| incr_linear(&mut prev_knot, k))
         .collect();
     Piecewise { segments }
 }
 
-fn incr_linear(prev_knot: &mut Knot, current_knot: Knot) -> Option<Segment<Poly1>> {
+fn incr_linear(prev_knot: &mut Knot, current_knot: Knot) -> Segment<Poly1> {
     // Make sure the X coordinate is increasing.
     let knot = Knot {
         x: prev_knot.x.max(current_knot.x),
@@ -28,7 +26,7 @@ fn incr_linear(prev_knot: &mut Knot, current_knot: Knot) -> Option<Segment<Poly1
 
     let seg = segment(*prev_knot, knot);
     *prev_knot = knot;
-    Some(seg)
+    seg
 }
 
 fn segment(knot0: Knot, knot1: Knot) -> Segment<Poly1> {

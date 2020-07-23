@@ -56,6 +56,29 @@ where
     }
 }
 
+impl<T> Segment<T> {
+    #[inline]
+    pub fn integral_iter<'a, I>(
+        segments: I,
+        knot0: Knot,
+    ) -> impl Iterator<Item = Segment<<T as HasIntegral>::IntegralOf>> + 'a
+    where
+        T: HasIntegral + 'a,
+        <T as HasIntegral>::IntegralOf: Translate,
+        I: IntoIterator<Item = &'a Segment<T>> + 'a,
+    {
+        let mut knot = knot0;
+        segments.into_iter().map(move |seg| {
+            let int = seg.integral(knot);
+            knot = Knot {
+                x: int.end,
+                y: int.evaluate(int.end),
+            };
+            int
+        })
+    }
+}
+
 #[derive(Debug, PartialEq, Clone)]
 pub struct Piecewise<T> {
     pub segments: Vec<Segment<T>>,
@@ -214,11 +237,12 @@ impl<T: Evaluate> Piecewise<T> {
             seg_ix.map_or(self.segments.len() - 1, |i| i + start)
         };
 
+        let mut prev_seg = 0;
         xs.iter()
-            .scan(0, |prev_seg, &x| {
-                let seg_ix = find_seg(*prev_seg, x);
-                *prev_seg = seg_ix;
-                Some(self.segments[seg_ix].poly.evaluate(x))
+            .map(|&x| {
+                let seg_ix = find_seg(prev_seg, x);
+                prev_seg = seg_ix;
+                self.segments[seg_ix].poly.evaluate(x)
             })
             .collect()
     }
@@ -250,34 +274,30 @@ where
         // Everything here seems very inefficient. I think Piecewise
         // should also be able to accept slices.
         let res_vec = {
-            let p_tail = Piecewise {
-                segments: self.segments[1..].to_vec(),
-            };
-            let p_tail_int = p_tail.integral(Knot {
-                x: indef_0.end,
-                y: indef_0.evaluate(indef_0.end),
-            });
-            let mut res_vec = Vec::with_capacity(self.segments.len());
+            let p_tail_int = Segment::integral_iter(
+                &self.segments[1..],
+                Knot {
+                    x: indef_0.end,
+                    y: indef_0.evaluate(indef_0.end),
+                },
+            );
+
+            let mut res_vec = Vec::with_capacity(self.segments.len() + 1);
             res_vec.push(indef_0);
-            &res_vec.extend(p_tail_int.segments);
+            &res_vec.extend(p_tail_int);
             res_vec
         };
 
         Piecewise { segments: res_vec }
     }
-    fn integral(&self, knot0: Knot) -> Self::IntegralOf {
-        let mut ints = Vec::with_capacity(self.segments.len());
 
-        let mut knot = knot0;
-        for seg in self.segments.iter() {
-            let int = seg.integral(knot);
-            knot = Knot {
-                x: int.end,
-                y: int.evaluate(int.end),
-            };
-            ints.push(int);
+    // TODO: slow when using iter!
+    fn integral(&self, knot0: Knot) -> Self::IntegralOf {
+        // Slightly slower than manually inlined version... but only slightly;
+        // perhaps come back to this.
+        Piecewise {
+            segments: Segment::integral_iter(&self.segments, knot0).collect(),
         }
-        Piecewise { segments: ints }
     }
 }
 
