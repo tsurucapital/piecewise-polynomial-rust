@@ -31,10 +31,11 @@ fn incr_linear(prev_knot: &mut Knot, current_knot: Knot) -> Segment<Poly1> {
 fn segment(knot0: Knot, knot1: Knot) -> Segment<Poly1> {
     let end = knot1.x;
     let indef = {
-        let pv = if knot1.x == knot0.x {
+        let dx = knot1.x - knot0.x;
+        let pv = if dx < f64::EPSILON {
             0.0
         } else {
-            (knot1.y - knot0.y) / (knot1.x - knot0.x)
+            (knot1.y - knot0.y) / dx
         };
         Poly0(pv).indefinite()
     };
