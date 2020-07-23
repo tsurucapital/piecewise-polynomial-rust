@@ -1,4 +1,4 @@
-use crate::piecewise_polynomial::*;
+use crate::piecewise::*;
 use crate::polynomial::*;
 use std::iter;
 
