@@ -1,6 +1,7 @@
+use arbitrary::Arbitrary;
 use std::ops::{Add, Mul, Neg};
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Arbitrary)]
 pub struct Knot {
     pub x: f64,
     pub y: f64,
@@ -53,7 +54,7 @@ where
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Default)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
 pub struct Poly0(pub f64);
 impl Evaluate for Poly0 {
     fn evaluate(&self, _: f64) -> f64 {
@@ -102,7 +103,7 @@ impl Add for Poly0 {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Default)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
 pub struct Poly1(pub [f64; 2]);
 impl Evaluate for Poly1 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -153,7 +154,7 @@ impl Add for Poly1 {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Default)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
 pub struct Poly2(pub [f64; 3]);
 impl Evaluate for Poly2 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -211,7 +212,7 @@ impl Add for Poly2 {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Default)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
 pub struct Poly3(pub [f64; 4]);
 impl Evaluate for Poly3 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -286,7 +287,7 @@ impl Add for Poly3 {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Default)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
 pub struct Poly4(pub [f64; 5]);
 impl Evaluate for Poly4 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -366,7 +367,7 @@ impl Add for Poly4 {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Default)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
 pub struct Poly5(pub [f64; 6]);
 impl Evaluate for Poly5 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -455,7 +456,7 @@ impl Add for Poly5 {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Default)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
 pub struct Poly6(pub [f64; 7]);
 impl Evaluate for Poly6 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -645,7 +646,7 @@ impl Add for Poly7 {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Default)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
 pub struct Poly8(pub [f64; 9]);
 impl Evaluate for Poly8 {
     fn evaluate(&self, x: f64) -> f64 {
