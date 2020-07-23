@@ -484,6 +484,7 @@ impl HasIntegral for Log<Poly8> {
     }
 }
 
+#[cfg(test)]
 mod tests {
     #[test]
     fn evaluate_log_poly0() {

@@ -361,6 +361,7 @@ impl<T: Translate> Translate for Piecewise<T> {
     }
 }
 
+#[cfg(test)]
 mod tests {
     // We start tests from Poly1 because original implementation has
     // no Unbox instance for Poly0 for some reason so it can't do

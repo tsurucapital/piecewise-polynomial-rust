@@ -87,6 +87,7 @@ fn segment(f_x0_dx: f64, knot_0: Knot, f_x1_dx: f64, knot_1: Knot) -> Segment<Po
     Segment { end, poly }
 }
 
+#[cfg(test)]
 mod tests {
     #[test]
     fn test_constrained_spline_simple() {

@@ -44,6 +44,7 @@ fn segment(knot0: Knot, knot1: Knot) -> Segment<Poly1> {
     Segment { end, poly }
 }
 
+#[cfg(test)]
 mod tests {
     #[test]
     fn test_linear_simple() {
