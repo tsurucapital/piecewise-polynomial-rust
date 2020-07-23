@@ -363,12 +363,15 @@ impl<T: Translate> Translate for Piecewise<T> {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use crate::log_polynomial::*;
+    use assert_approx_eq::assert_approx_eq;
+
     // We start tests from Poly1 because original implementation has
     // no Unbox instance for Poly0 for some reason so it can't do
     // piecewise evaluate that requires the instance.
     #[test]
     fn evaluate_piecewise_poly1() {
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -386,8 +389,6 @@ mod tests {
 
     #[test]
     fn evaluate_piecewise_log_poly1() {
-        use crate::log_polynomial::*;
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -405,7 +406,6 @@ mod tests {
 
     #[test]
     fn integral_piecewise_poly1() {
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -437,8 +437,6 @@ mod tests {
 
     #[test]
     fn integral_piecewise_log_poly1() {
-        use crate::log_polynomial::*;
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -476,7 +474,6 @@ mod tests {
 
     #[test]
     fn evaluate_piecewise_poly2() {
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -494,9 +491,6 @@ mod tests {
 
     #[test]
     fn evaluate_piecewise_log_poly2() {
-        use crate::log_polynomial::*;
-        use crate::piecewise_polynomial::*;
-        use assert_approx_eq::assert_approx_eq;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -514,7 +508,6 @@ mod tests {
 
     #[test]
     fn integral_piecewise_poly2() {
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -546,8 +539,6 @@ mod tests {
 
     #[test]
     fn integral_piecewise_log_poly2() {
-        use crate::log_polynomial::*;
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -585,7 +576,6 @@ mod tests {
 
     #[test]
     fn evaluate_piecewise_poly3() {
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -603,9 +593,6 @@ mod tests {
 
     #[test]
     fn evaluate_piecewise_log_poly3() {
-        use crate::log_polynomial::*;
-        use crate::piecewise_polynomial::*;
-        use assert_approx_eq::assert_approx_eq;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -623,7 +610,6 @@ mod tests {
 
     #[test]
     fn integral_piecewise_poly3() {
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -655,8 +641,6 @@ mod tests {
 
     #[test]
     fn integral_piecewise_log_poly3() {
-        use crate::log_polynomial::*;
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -694,7 +678,6 @@ mod tests {
 
     #[test]
     fn evaluate_piecewise_poly4() {
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -712,9 +695,6 @@ mod tests {
 
     #[test]
     fn evaluate_piecewise_log_poly4() {
-        use crate::log_polynomial::*;
-        use crate::piecewise_polynomial::*;
-        use assert_approx_eq::assert_approx_eq;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -732,7 +712,6 @@ mod tests {
 
     #[test]
     fn integral_piecewise_poly4() {
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -764,8 +743,6 @@ mod tests {
 
     #[test]
     fn integral_piecewise_log_poly4() {
-        use crate::log_polynomial::*;
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -805,7 +782,6 @@ mod tests {
 
     #[test]
     fn evaluate_piecewise_poly5() {
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -823,9 +799,6 @@ mod tests {
 
     #[test]
     fn evaluate_piecewise_log_poly5() {
-        use crate::log_polynomial::*;
-        use crate::piecewise_polynomial::*;
-        use assert_approx_eq::assert_approx_eq;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -843,7 +816,6 @@ mod tests {
 
     #[test]
     fn integral_piecewise_poly5() {
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -883,8 +855,6 @@ mod tests {
 
     #[test]
     fn integral_piecewise_log_poly5() {
-        use crate::log_polynomial::*;
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -922,7 +892,6 @@ mod tests {
 
     #[test]
     fn evaluate_piecewise_poly6() {
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -940,9 +909,6 @@ mod tests {
 
     #[test]
     fn evaluate_piecewise_log_poly6() {
-        use crate::log_polynomial::*;
-        use crate::piecewise_polynomial::*;
-        use assert_approx_eq::assert_approx_eq;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -960,7 +926,6 @@ mod tests {
 
     #[test]
     fn integral_piecewise_poly6() {
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -1010,8 +975,6 @@ mod tests {
 
     #[test]
     fn integral_piecewise_log_poly6() {
-        use crate::log_polynomial::*;
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -1049,7 +1012,6 @@ mod tests {
 
     #[test]
     fn evaluate_piecewise_poly7() {
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -1067,9 +1029,6 @@ mod tests {
 
     #[test]
     fn evaluate_piecewise_log_poly7() {
-        use crate::log_polynomial::*;
-        use crate::piecewise_polynomial::*;
-        use assert_approx_eq::assert_approx_eq;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -1087,7 +1046,6 @@ mod tests {
 
     #[test]
     fn integral_piecewise_poly7() {
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -1139,8 +1097,6 @@ mod tests {
 
     #[test]
     fn integral_piecewise_log_poly7() {
-        use crate::log_polynomial::*;
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -1182,7 +1138,6 @@ mod tests {
 
     #[test]
     fn evaluate_piecewise_poly8() {
-        use crate::piecewise_polynomial::*;
         let poly = Piecewise {
             segments: vec![
                 Segment {
@@ -1200,9 +1155,6 @@ mod tests {
 
     #[test]
     fn evaluate_piecewise_log_poly8() {
-        use crate::log_polynomial::*;
-        use crate::piecewise_polynomial::*;
-        use assert_approx_eq::assert_approx_eq;
         let poly = Piecewise {
             segments: vec![
                 Segment {

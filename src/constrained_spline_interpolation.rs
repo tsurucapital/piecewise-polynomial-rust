@@ -89,11 +89,10 @@ fn segment(f_x0_dx: f64, knot_0: Knot, f_x1_dx: f64, knot_1: Knot) -> Segment<Po
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
     fn test_constrained_spline_simple() {
-        use crate::constrained_spline_interpolation::constrained_spline;
-        use crate::piecewise_polynomial::{Piecewise, Segment};
-        use crate::polynomial::{Knot, Poly3};
         let knots = vec![
             Knot { x: 0.0, y: 0.0 },
             Knot { x: 1.0, y: 1.0 },
@@ -121,10 +120,6 @@ mod tests {
 
     #[test]
     fn test_constrained_spline_small_fracs() {
-        use crate::constrained_spline_interpolation::constrained_spline;
-        use crate::piecewise_polynomial::{Piecewise, Segment};
-        use crate::polynomial::{Knot, Poly3};
-
         let knots = vec![
             Knot {
                 x: 7.807257773555076e-2,
@@ -179,9 +174,6 @@ mod tests {
 
     #[test]
     fn test_constrained_spline_big_fracs() {
-        use crate::constrained_spline_interpolation::constrained_spline;
-        use crate::piecewise_polynomial::{Piecewise, Segment};
-        use crate::polynomial::{Knot, Poly3};
         let knots = vec![
             Knot {
                 x: -7.679272597449861e18,
