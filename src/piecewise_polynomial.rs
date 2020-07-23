@@ -1,5 +1,6 @@
 use crate::polynomial::*;
 use std::cmp::Ordering;
+use std::iter;
 use std::ops::{Add, Mul, Neg};
 
 /// A 'Segment' of a piecewise 'Polynomial', valid for /begin/ ≤ @x@ <
@@ -280,10 +281,7 @@ where
                 },
             );
 
-            let mut res_vec = Vec::with_capacity(self.segments.len() + 1);
-            res_vec.push(indef_0);
-            &res_vec.extend(p_tail_int);
-            res_vec
+            iter::once(indef_0).chain(p_tail_int).collect()
         };
 
         Piecewise { segments: res_vec }

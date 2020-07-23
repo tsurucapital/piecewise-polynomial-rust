@@ -4,6 +4,7 @@
 
 use crate::piecewise_polynomial::*;
 use crate::polynomial::*;
+use std::iter;
 
 pub fn constrained_spline(ks0n: Vec<Knot>) -> Piecewise<Poly3> {
     assert!(ks0n.len() >= 3, "need at least 3 knots");
@@ -21,6 +22,7 @@ pub fn constrained_spline(ks0n: Vec<Knot>) -> Piecewise<Poly3> {
     let Knot { x: xn, y: yn } = ks0n.last().unwrap();
 
     // derivatives: at intermediate knots, and endpoints
+    // TODO: It's possible to re-write this with no intermediate allocations
     let f_mid: Vec<f64> = ks0l
         .iter()
         .zip(ks1m.iter())
@@ -31,21 +33,14 @@ pub fn constrained_spline(ks0n: Vec<Knot>) -> Piecewise<Poly3> {
     let f_x0 = (3.0 / 2.0) * (y1 - y0) / (x1 - x0) - (1.0 / 2.0) * f_x1; // {-7b-}
     let f_xm = f_mid.last().unwrap();
     let f_xn = (3.0 / 2.0) * (yn - ym) / (xn - xm) - (1.0 / 2.0) * f_xm; //{-7c-}
-
-    let f_all = {
-        let mut r = Vec::with_capacity(1 + f_mid.len() + 1);
-        r.push(f_x0);
-        &r.extend(f_mid);
-        r.push(f_xn);
-        r
-    };
+    let f_all = iter::once(f_x0).chain(f_mid).chain(iter::once(f_xn));
 
     let segments = f_all
-        .iter()
+        .clone()
         .zip(ks0m.iter())
-        .zip((&f_all[1..]).iter())
+        .zip(f_all.skip(1))
         .zip(ks1n.iter())
-        .map(|(((&f_x0_dx, &knot_0), &f_x1_dx), &knot_1)| segment(f_x0_dx, knot_0, f_x1_dx, knot_1))
+        .map(|(((f_x0_dx, &knot_0), f_x1_dx), &knot_1)| segment(f_x0_dx, knot_0, f_x1_dx, knot_1))
         .collect();
 
     Piecewise { segments }
