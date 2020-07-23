@@ -35,7 +35,7 @@ where
 
 
 impl<T: HasDerivative> HasDerivative for Segment<T> {
-    type DerivativeOf = Segment<<T as HasDerivative>::DerivativeOf>;
+    type DerivativeOf = Segment<T::DerivativeOf>;
     fn derivative(&self) -> Self::DerivativeOf {
         Segment {
             end: self.end,
@@ -56,9 +56,9 @@ impl<T: Translate> Translate for Segment<T> {
 impl<T> HasIntegral for Segment<T>
 where
     T: HasIntegral,
-    <T as HasIntegral>::IntegralOf: Translate,
+    T::IntegralOf: Translate,
 {
-    type IntegralOf = Segment<<T as HasIntegral>::IntegralOf>;
+    type IntegralOf = Segment<T::IntegralOf>;
     fn indefinite(&self) -> Self::IntegralOf {
         Segment {
             end: self.end,
@@ -76,10 +76,10 @@ impl<T> Segment<T> {
     pub fn integral_iter<'a, I>(
         segments: I,
         knot0: Knot,
-    ) -> impl Iterator<Item = Segment<<T as HasIntegral>::IntegralOf>> + 'a
+    ) -> impl Iterator<Item = Segment<T::IntegralOf>> + 'a
     where
         T: HasIntegral + 'a,
-        <T as HasIntegral>::IntegralOf: Translate,
+        T::IntegralOf: Translate,
         I: IntoIterator<Item = &'a Segment<T>> + 'a,
     {
         let mut knot = knot0;
@@ -263,7 +263,7 @@ impl<T> HasDerivative for Piecewise<T>
 where
     T: HasDerivative,
 {
-    type DerivativeOf = Piecewise<<T as HasDerivative>::DerivativeOf>;
+    type DerivativeOf = Piecewise<T::DerivativeOf>;
     fn derivative(&self) -> Self::DerivativeOf {
         Piecewise {
             segments: self.segments.iter().map(|seg| seg.derivative()).collect(),
@@ -274,9 +274,9 @@ where
 impl<T> HasIntegral for Piecewise<T>
 where
     T: HasIntegral + Clone,
-    <T as HasIntegral>::IntegralOf: Translate,
+    T::IntegralOf: Translate,
 {
-    type IntegralOf = Piecewise<<T as HasIntegral>::IntegralOf>;
+    type IntegralOf = Piecewise<T::IntegralOf>;
     fn indefinite(&self) -> Self::IntegralOf {
         if self.segments.is_empty() {
             return Default::default();
