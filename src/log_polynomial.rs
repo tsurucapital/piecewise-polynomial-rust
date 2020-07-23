@@ -93,22 +93,12 @@ impl<T: Translate + Copy> Translate for IntOfLog<T> {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Default)]
 pub struct IntOfLogPoly4 {
     /// Constant term
     pub k: f64,
     pub coeffs: [f64; 4],
     pub u: f64,
-}
-
-impl Default for IntOfLogPoly4 {
-    fn default() -> Self {
-        IntOfLogPoly4 {
-            k: 0.0,
-            coeffs: [0.0; 4],
-            u: 0.0,
-        }
-    }
 }
 
 impl Add for IntOfLogPoly4 {

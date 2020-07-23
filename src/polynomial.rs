@@ -53,7 +53,7 @@ where
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Default)]
 pub struct Poly0(pub f64);
 impl Evaluate for Poly0 {
     fn evaluate(&self, _: f64) -> f64 {
@@ -102,13 +102,7 @@ impl Add for Poly0 {
     }
 }
 
-impl Default for Poly0 {
-    fn default() -> Self {
-        Poly0(0.0)
-    }
-}
-
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Default)]
 pub struct Poly1(pub [f64; 2]);
 impl Evaluate for Poly1 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -158,13 +152,8 @@ impl Add for Poly1 {
         Poly1([self.0[0] + other.0[0], self.0[1] + other.0[1]])
     }
 }
-impl Default for Poly1 {
-    fn default() -> Self {
-        Poly1([0.0; 2])
-    }
-}
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Default)]
 pub struct Poly2(pub [f64; 3]);
 impl Evaluate for Poly2 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -221,13 +210,8 @@ impl Add for Poly2 {
         ])
     }
 }
-impl Default for Poly2 {
-    fn default() -> Self {
-        Poly2([0.0; 3])
-    }
-}
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Default)]
 pub struct Poly3(pub [f64; 4]);
 impl Evaluate for Poly3 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -301,13 +285,8 @@ impl Add for Poly3 {
         ])
     }
 }
-impl Default for Poly3 {
-    fn default() -> Self {
-        Poly3([0.0; 4])
-    }
-}
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Default)]
 pub struct Poly4(pub [f64; 5]);
 impl Evaluate for Poly4 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -386,13 +365,8 @@ impl Add for Poly4 {
         ])
     }
 }
-impl Default for Poly4 {
-    fn default() -> Self {
-        Poly4([0.0; 5])
-    }
-}
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Default)]
 pub struct Poly5(pub [f64; 6]);
 impl Evaluate for Poly5 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -480,13 +454,8 @@ impl Add for Poly5 {
         ])
     }
 }
-impl Default for Poly5 {
-    fn default() -> Self {
-        Poly5([0.0; 6])
-    }
-}
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Default)]
 pub struct Poly6(pub [f64; 7]);
 impl Evaluate for Poly6 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -578,13 +547,8 @@ impl Add for Poly6 {
         ])
     }
 }
-impl Default for Poly6 {
-    fn default() -> Self {
-        Poly6([0.0; 7])
-    }
-}
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Default)]
 pub struct Poly7(pub [f64; 8]);
 impl Evaluate for Poly7 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -680,13 +644,8 @@ impl Add for Poly7 {
         ])
     }
 }
-impl Default for Poly7 {
-    fn default() -> Self {
-        Poly7([0.0; 8])
-    }
-}
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Default)]
 pub struct Poly8(pub [f64; 9]);
 impl Evaluate for Poly8 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -765,11 +724,6 @@ impl Add for Poly8 {
             self.0[7] + other.0[7],
             self.0[8] + other.0[8],
         ])
-    }
-}
-impl Default for Poly8 {
-    fn default() -> Self {
-        Poly8([0.0; 9])
     }
 }
 
