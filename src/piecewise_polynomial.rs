@@ -3,9 +3,11 @@ use std::cmp::Ordering;
 use std::iter;
 use std::ops::{Add, Mul, Neg};
 
-/// A 'Segment' of a piecewise 'Polynomial', valid for /begin/ ≤ @x@ <
-/// @seg_end@, where /begin/ is implicit from the previous segment, if
-/// any.
+/// A segment of a piecewise polynomial.
+///
+/// A segment is valid for _begin_ ≤ `x` < `end`, where _begin_ is implied
+/// by the previous segment if it exists, or for `x` < `end` if this is the
+/// first segment.
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Segment<T> {
     pub end: f64,
