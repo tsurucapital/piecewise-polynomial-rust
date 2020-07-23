@@ -120,14 +120,11 @@ where
     Segment<T>: Mul<f64, Output = Segment<T>> + Copy,
 {
     type Output = Self;
-    fn mul(self, rhs: f64) -> Self::Output {
-        Piecewise {
-            segments: self
-                .segments
-                .iter()
-                .map(|seg| *seg * rhs)
-                .collect(),
+    fn mul(mut self, rhs: f64) -> Self::Output {
+        for seg in &mut self.segments {
+            *seg = *seg * rhs;
         }
+        self
     }
 }
 
@@ -136,17 +133,11 @@ where
     T: Neg<Output = T> + Copy,
 {
     type Output = Self;
-    fn neg(self) -> Self::Output {
-        Piecewise {
-            segments: self
-                .segments
-                .iter()
-                .map(|seg| Segment {
-                    end: seg.end,
-                    poly: seg.poly.neg(),
-                })
-                .collect(),
+    fn neg(mut self) -> Self::Output {
+        for seg in &mut self.segments {
+            seg.poly = seg.poly.neg();
         }
+        self
     }
 }
 
