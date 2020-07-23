@@ -7,10 +7,9 @@ use std::ops::{Add, Mul, Neg};
 pub struct Log<T>(pub T);
 
 impl<Scalar, T: Mul<Scalar>> Mul<Scalar> for Log<T> {
-    type Output = Log<<T as Mul<Scalar>>::Output>;
+    type Output = Log<T::Output>;
     fn mul(self, rhs: Scalar) -> Self::Output {
-        let r: <T as Mul<Scalar>>::Output = self.0 * rhs;
-        Log(r)
+        Log(self.0 * rhs)
     }
 }
 
@@ -69,7 +68,7 @@ impl<T: Default> Default for IntOfLog<T> {
 }
 
 impl<T: Add> Add for IntOfLog<T> {
-    type Output = IntOfLog<<T as Add>::Output>;
+    type Output = IntOfLog<T::Output>;
     fn add(self, other: Self) -> Self::Output {
         IntOfLog {
             k: self.k + other.k,
@@ -86,7 +85,7 @@ where
     Scalar: Mul<f64, Output = f64> + Copy,
     T: Mul<Scalar>,
 {
-    type Output = IntOfLog<<T as Mul<Scalar>>::Output>;
+    type Output = IntOfLog<T::Output>;
     fn mul(self, rhs: Scalar) -> Self::Output {
         IntOfLog {
             k: rhs * self.k,
@@ -96,7 +95,7 @@ where
 }
 
 impl<T: Neg> Neg for IntOfLog<T> {
-    type Output = IntOfLog<<T as Neg>::Output>;
+    type Output = IntOfLog<T::Output>;
     fn neg(self) -> Self::Output {
         IntOfLog {
             k: self.k.neg(),
