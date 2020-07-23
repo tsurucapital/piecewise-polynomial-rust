@@ -41,21 +41,18 @@ pub trait Translate {
     fn translate(&self, v: f64) -> Self;
 }
 
-#[inline]
-/// For our polynomials, we use manually unrolled Estin's scheme
-/// (manually unrolled simply because it's easier than making general
-/// implementation that's going to inline well). However, if you have
-/// some collection of coefficients of your own, I provide FMA-enabled
-/// Horner's scheme which performs fairly closely.
-pub fn evaluate_horners<'a, I>(coeffs: I, v: f64) -> f64
-where
-    I: IntoIterator<Item = &'a f64>,
-    <I as IntoIterator>::IntoIter: DoubleEndedIterator,
-{
-    let mut iter = coeffs.into_iter().rev();
-    match iter.next() {
-        None => 0.0,
-        Some(&first) => iter.fold(first, |acc, &e| acc.mul_add(v, e)),
+/// Rank-n polynomial
+///
+/// Evaluated using FMA-enabled Horner's scheme.
+#[derive(Debug, PartialEq, Clone, Arbitrary)]
+pub struct PolyN(pub Vec<f64>);
+impl Evaluate for PolyN {
+    fn evaluate(&self, x: f64) -> f64 {
+        let mut iter = self.0.iter().rev();
+        match iter.next() {
+            None => 0.0,
+            Some(&first) => iter.fold(first, |acc, &e| acc.mul_add(x, e)),
+        }
     }
 }
 
