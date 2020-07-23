@@ -1,6 +1,7 @@
 use crate::piecewise_polynomial::*;
 use crate::polynomial::*;
 
+/// Create a piecewise-linear function
 #[inline]
 pub fn linear(knots: &[Knot]) -> Piecewise<Poly1> {
     assert!(knots.len() >= 2, "need at least 2 knots");

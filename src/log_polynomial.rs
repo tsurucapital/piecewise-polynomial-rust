@@ -2,7 +2,7 @@ use crate::polynomial::*;
 use crate::polynomial::{Evaluate, HasIntegral, Translate};
 use std::ops::{Add, Mul, Neg};
 
-/// Polynomial of natural log of x.
+/// Polynomial of natural log of x
 #[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Log<T>(pub T);
 

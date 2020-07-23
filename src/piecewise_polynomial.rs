@@ -4,7 +4,7 @@ use std::cmp::Ordering;
 use std::iter;
 use std::ops::{Add, Mul, Neg};
 
-/// A segment of a piecewise polynomial.
+/// A segment of a piecewise polynomial
 ///
 /// A segment is valid for _begin_ ≤ `x` < `end`, where _begin_ is implied
 /// by the previous segment if it exists, or for `x` < `end` if this is the
@@ -116,7 +116,7 @@ impl<T> Segment<T> {
     }
 }
 
-/// A piecewise-defined function.
+/// A piecewise-defined function
 ///
 /// The pieces are functions of type `T`.  This type doesn't provide any
 /// guarantees that the function is smooth at the knots - the user must

@@ -1,6 +1,7 @@
 use arbitrary::Arbitrary;
 use std::ops::{Add, Mul, Neg};
 
+/// A join-point between two functions
 #[derive(Debug, PartialEq, Clone, Copy, Arbitrary)]
 pub struct Knot {
     pub x: f64,
@@ -13,15 +14,18 @@ impl Knot {
     }
 }
 
+/// Functions in ℝ → ℝ
 pub trait Evaluate {
     fn evaluate(&self, v: f64) -> f64;
 }
 
+/// Differentiable functions
 pub trait HasDerivative {
     type DerivativeOf;
     fn derivative(&self) -> Self::DerivativeOf;
 }
 
+/// Integrable functions
 pub trait HasIntegral
 where
     Self::IntegralOf: Evaluate,
@@ -31,8 +35,9 @@ where
     fn integral(&self, knot: Knot) -> Self::IntegralOf;
 }
 
-/// Vertically translate the polynomial.
+/// Functions which can be translated vertically
 pub trait Translate {
+    /// Vertically translate the polynomial
     fn translate(&self, v: f64) -> Self;
 }
 
@@ -54,6 +59,9 @@ where
     }
 }
 
+/// Rank-0 polynomal
+///
+/// Evaluated using manually unrolled Estin's scheme.
 #[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
 pub struct Poly0(pub f64);
 impl Evaluate for Poly0 {
@@ -103,6 +111,9 @@ impl Add for Poly0 {
     }
 }
 
+/// Rank-1 polynomal
+///
+/// Evaluated using manually unrolled Estin's scheme.
 #[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
 pub struct Poly1(pub [f64; 2]);
 impl Evaluate for Poly1 {
@@ -154,6 +165,9 @@ impl Add for Poly1 {
     }
 }
 
+/// Rank-2 polynomal
+///
+/// Evaluated using manually unrolled Estin's scheme.
 #[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
 pub struct Poly2(pub [f64; 3]);
 impl Evaluate for Poly2 {
@@ -212,6 +226,9 @@ impl Add for Poly2 {
     }
 }
 
+/// Rank-3 polynomal
+///
+/// Evaluated using manually unrolled Estin's scheme.
 #[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
 pub struct Poly3(pub [f64; 4]);
 impl Evaluate for Poly3 {
@@ -287,6 +304,9 @@ impl Add for Poly3 {
     }
 }
 
+/// Rank-4 polynomal
+///
+/// Evaluated using manually unrolled Estin's scheme.
 #[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
 pub struct Poly4(pub [f64; 5]);
 impl Evaluate for Poly4 {
@@ -367,6 +387,9 @@ impl Add for Poly4 {
     }
 }
 
+/// Rank-5 polynomal
+///
+/// Evaluated using manually unrolled Estin's scheme.
 #[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
 pub struct Poly5(pub [f64; 6]);
 impl Evaluate for Poly5 {
@@ -456,6 +479,9 @@ impl Add for Poly5 {
     }
 }
 
+/// Rank-6 polynomal
+///
+/// Evaluated using manually unrolled Estin's scheme.
 #[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
 pub struct Poly6(pub [f64; 7]);
 impl Evaluate for Poly6 {
@@ -549,6 +575,9 @@ impl Add for Poly6 {
     }
 }
 
+/// Rank-7 polynomal
+///
+/// Evaluated using manually unrolled Estin's scheme.
 #[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
 pub struct Poly7(pub [f64; 8]);
 impl Evaluate for Poly7 {
@@ -646,6 +675,9 @@ impl Add for Poly7 {
     }
 }
 
+/// Rank-8 polynomal
+///
+/// Evaluated using manually unrolled Estin's scheme.
 #[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
 pub struct Poly8(pub [f64; 9]);
 impl Evaluate for Poly8 {
