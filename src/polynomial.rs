@@ -1,5 +1,4 @@
 use arbitrary::Arbitrary;
-use std::iter;
 use std::ops::{Add, Mul, Neg};
 
 /// A join-point between two functions
@@ -39,7 +38,7 @@ where
 /// Functions which can be translated vertically
 pub trait Translate {
     /// Vertically translate the polynomial
-    fn translate(&self, v: f64) -> Self;
+    fn translate(&mut self, v: f64);
 }
 
 /// Rank-n polynomial
@@ -57,11 +56,10 @@ impl Evaluate for PolyN {
     }
 }
 impl Translate for PolyN {
-    fn translate(&self, v: f64) -> Self {
-        let mut coeffs = self.0.iter().copied();
-        match coeffs.next() {
-            None => PolyN(vec![v]),
-            Some(x0) => PolyN(iter::once(x0 + v).chain(coeffs).collect()),
+    fn translate(&mut self, v: f64) {
+        match self.0.get_mut(0) {
+            None => self.0.push(v),
+            Some(x0) => *x0 += v,
         }
     }
 }
@@ -83,8 +81,8 @@ impl HasDerivative for Poly0 {
     }
 }
 impl Translate for Poly0 {
-    fn translate(&self, v: f64) -> Self {
-        Poly0(self.0 + v)
+    fn translate(&mut self, v: f64) {
+        self.0 += v
     }
 }
 impl HasIntegral for Poly0 {
@@ -94,8 +92,9 @@ impl HasIntegral for Poly0 {
         Poly1(dst)
     }
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
-        let indef = self.indefinite();
-        indef.translate(knot.y - indef.evaluate(knot.x))
+        let mut indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x));
+        indef
     }
 }
 
@@ -136,10 +135,8 @@ impl HasDerivative for Poly1 {
     }
 }
 impl Translate for Poly1 {
-    fn translate(&self, v: f64) -> Self {
-        let mut dst = self.0;
-        dst[0] += v;
-        Poly1(dst)
+    fn translate(&mut self, v: f64) {
+        self.0[0] += v;
     }
 }
 impl HasIntegral for Poly1 {
@@ -149,8 +146,9 @@ impl HasIntegral for Poly1 {
         Poly2(dst)
     }
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
-        let indef = self.indefinite();
-        indef.translate(knot.y - indef.evaluate(knot.x))
+        let mut indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x));
+        indef
     }
 }
 impl Mul<f64> for Poly1 {
@@ -193,10 +191,8 @@ impl HasDerivative for Poly2 {
     }
 }
 impl Translate for Poly2 {
-    fn translate(&self, v: f64) -> Self {
-        let mut dst = self.0;
-        dst[0] += v;
-        Poly2(dst)
+    fn translate(&mut self, v: f64) {
+        self.0[0] += v;
     }
 }
 impl HasIntegral for Poly2 {
@@ -206,8 +202,9 @@ impl HasIntegral for Poly2 {
         Poly3(dst)
     }
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
-        let indef = self.indefinite();
-        indef.translate(knot.y - indef.evaluate(knot.x))
+        let mut indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x));
+        indef
     }
 }
 impl Mul<f64> for Poly2 {
@@ -259,10 +256,8 @@ impl HasDerivative for Poly3 {
     }
 }
 impl Translate for Poly3 {
-    fn translate(&self, v: f64) -> Self {
-        let mut dst = self.0;
-        dst[0] += v;
-        Poly3(dst)
+    fn translate(&mut self, v: f64) {
+        self.0[0] += v;
     }
 }
 impl HasIntegral for Poly3 {
@@ -278,8 +273,9 @@ impl HasIntegral for Poly3 {
         Poly4(dst)
     }
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
-        let indef = self.indefinite();
-        indef.translate(knot.y - indef.evaluate(knot.x))
+        let mut indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x));
+        indef
     }
 }
 impl Mul<f64> for Poly3 {
@@ -339,10 +335,8 @@ impl HasDerivative for Poly4 {
     }
 }
 impl Translate for Poly4 {
-    fn translate(&self, v: f64) -> Self {
-        let mut dst = self.0;
-        dst[0] += v;
-        Poly4(dst)
+    fn translate(&mut self, v: f64) {
+        self.0[0] += v;
     }
 }
 impl HasIntegral for Poly4 {
@@ -359,8 +353,9 @@ impl HasIntegral for Poly4 {
         Poly5(dst)
     }
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
-        let indef = self.indefinite();
-        indef.translate(knot.y - indef.evaluate(knot.x))
+        let mut indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x));
+        indef
     }
 }
 impl Mul<f64> for Poly4 {
@@ -428,10 +423,8 @@ impl HasDerivative for Poly5 {
     }
 }
 impl Translate for Poly5 {
-    fn translate(&self, v: f64) -> Self {
-        let mut dst = self.0;
-        dst[0] += v;
-        Poly5(dst)
+    fn translate(&mut self, v: f64) {
+        self.0[0] += v;
     }
 }
 impl HasIntegral for Poly5 {
@@ -449,8 +442,9 @@ impl HasIntegral for Poly5 {
         Poly6(dst)
     }
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
-        let indef = self.indefinite();
-        indef.translate(knot.y - indef.evaluate(knot.x))
+        let mut indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x));
+        indef
     }
 }
 impl Mul<f64> for Poly5 {
@@ -521,10 +515,8 @@ impl HasDerivative for Poly6 {
     }
 }
 impl Translate for Poly6 {
-    fn translate(&self, v: f64) -> Self {
-        let mut dst = self.0;
-        dst[0] += v;
-        Poly6(dst)
+    fn translate(&mut self, v: f64) {
+        self.0[0] += v;
     }
 }
 impl HasIntegral for Poly6 {
@@ -543,8 +535,9 @@ impl HasIntegral for Poly6 {
         Poly7(dst)
     }
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
-        let indef = self.indefinite();
-        indef.translate(knot.y - indef.evaluate(knot.x))
+        let mut indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x));
+        indef
     }
 }
 impl Mul<f64> for Poly6 {
@@ -618,10 +611,8 @@ impl HasDerivative for Poly7 {
     }
 }
 impl Translate for Poly7 {
-    fn translate(&self, v: f64) -> Self {
-        let mut dst = self.0;
-        dst[0] += v;
-        Poly7(dst)
+    fn translate(&mut self, v: f64) {
+        self.0[0] += v;
     }
 }
 impl HasIntegral for Poly7 {
@@ -641,8 +632,9 @@ impl HasIntegral for Poly7 {
         Poly8(dst)
     }
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
-        let indef = self.indefinite();
-        indef.translate(knot.y - indef.evaluate(knot.x))
+        let mut indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x));
+        indef
     }
 }
 impl Mul<f64> for Poly7 {
@@ -722,10 +714,8 @@ impl HasDerivative for Poly8 {
     }
 }
 impl Translate for Poly8 {
-    fn translate(&self, v: f64) -> Self {
-        let mut dst = self.0;
-        dst[0] += v;
-        Poly8(dst)
+    fn translate(&mut self, v: f64) {
+        self.0[0] += v;
     }
 }
 impl Mul<f64> for Poly8 {
@@ -788,9 +778,10 @@ mod tests {
 
     #[test]
     fn translate_poly0() {
-        let poly = Poly0(7.0);
+        let mut poly = Poly0(7.0);
         let result = Poly0(14.0);
-        assert_eq!(poly.translate(7.0), result);
+        poly.translate(7.0);
+        assert_eq!(poly, result);
     }
 
     #[test]
@@ -816,9 +807,10 @@ mod tests {
 
     #[test]
     fn translate_poly1() {
-        let poly = Poly1([7.0, 3.0]);
+        let mut poly = Poly1([7.0, 3.0]);
         let result = Poly1([14.0, 3.0]);
-        assert_eq!(poly.translate(7.0), result);
+        poly.translate(7.0);
+        assert_eq!(poly, result);
     }
 
     #[test]
@@ -844,9 +836,10 @@ mod tests {
 
     #[test]
     fn translate_poly2() {
-        let poly = Poly2([7.0, 3.0, 9.0]);
+        let mut poly = Poly2([7.0, 3.0, 9.0]);
         let result = Poly2([14.0, 3.0, 9.0]);
-        assert_eq!(poly.translate(7.0), result);
+        poly.translate(7.0);
+        assert_eq!(poly, result);
     }
 
     #[test]
@@ -872,9 +865,10 @@ mod tests {
 
     #[test]
     fn translate_poly3() {
-        let poly = Poly3([7.0, 3.0, 9.0, 8.0]);
+        let mut poly = Poly3([7.0, 3.0, 9.0, 8.0]);
         let result = Poly3([14.0, 3.0, 9.0, 8.0]);
-        assert_eq!(poly.translate(7.0), result);
+        poly.translate(7.0);
+        assert_eq!(poly, result);
     }
 
     #[test]
@@ -900,9 +894,10 @@ mod tests {
 
     #[test]
     fn translate_poly4() {
-        let poly = Poly4([7.0, 3.0, 9.0, 8.0, 6.0]);
+        let mut poly = Poly4([7.0, 3.0, 9.0, 8.0, 6.0]);
         let result = Poly4([14.0, 3.0, 9.0, 8.0, 6.0]);
-        assert_eq!(poly.translate(7.0), result);
+        poly.translate(7.0);
+        assert_eq!(poly, result);
     }
 
     #[test]
@@ -928,9 +923,10 @@ mod tests {
 
     #[test]
     fn translate_poly5() {
-        let poly = Poly5([7.0, 3.0, 9.0, 8.0, 6.0, 1.5]);
+        let mut poly = Poly5([7.0, 3.0, 9.0, 8.0, 6.0, 1.5]);
         let result = Poly5([14.0, 3.0, 9.0, 8.0, 6.0, 1.5]);
-        assert_eq!(poly.translate(7.0), result);
+        poly.translate(7.0);
+        assert_eq!(poly, result);
     }
 
     #[test]
@@ -956,9 +952,10 @@ mod tests {
 
     #[test]
     fn translate_poly6() {
-        let poly = Poly6([7.0, 3.0, 9.0, 8.0, 6.0, 1.5, 3.5]);
+        let mut poly = Poly6([7.0, 3.0, 9.0, 8.0, 6.0, 1.5, 3.5]);
         let result = Poly6([14.0, 3.0, 9.0, 8.0, 6.0, 1.5, 3.5]);
-        assert_eq!(poly.translate(7.0), result);
+        poly.translate(7.0);
+        assert_eq!(poly, result);
     }
 
     #[test]
@@ -984,9 +981,10 @@ mod tests {
 
     #[test]
     fn translate_poly7() {
-        let poly = Poly7([7.0, 3.0, 9.0, 8.0, 6.0, 1.5, 3.5, 4.5]);
+        let mut poly = Poly7([7.0, 3.0, 9.0, 8.0, 6.0, 1.5, 3.5, 4.5]);
         let result = Poly7([14.0, 3.0, 9.0, 8.0, 6.0, 1.5, 3.5, 4.5]);
-        assert_eq!(poly.translate(7.0), result);
+        poly.translate(7.0);
+        assert_eq!(poly, result);
     }
 
     #[test]
@@ -1012,8 +1010,9 @@ mod tests {
 
     #[test]
     fn translate_poly8() {
-        let poly = Poly8([7.0, 3.0, 9.0, 8.0, 6.0, 1.5, 3.5, 4.5, 9.0]);
+        let mut poly = Poly8([7.0, 3.0, 9.0, 8.0, 6.0, 1.5, 3.5, 4.5, 9.0]);
         let result = Poly8([14.0, 3.0, 9.0, 8.0, 6.0, 1.5, 3.5, 4.5, 9.0]);
-        assert_eq!(poly.translate(7.0), result);
+        poly.translate(7.0);
+        assert_eq!(poly, result);
     }
 }

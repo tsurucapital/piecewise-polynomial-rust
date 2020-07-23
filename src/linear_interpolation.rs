@@ -31,7 +31,7 @@ fn incr_linear(prev_knot: &mut Knot, current_knot: Knot) -> Segment<Poly1> {
 
 fn segment(knot0: Knot, knot1: Knot) -> Segment<Poly1> {
     let end = knot1.x;
-    let indef = {
+    let mut poly = {
         let dx = knot1.x - knot0.x;
         let pv = if dx < f64::EPSILON {
             0.0
@@ -40,7 +40,7 @@ fn segment(knot0: Knot, knot1: Knot) -> Segment<Poly1> {
         };
         Poly0(pv).indefinite()
     };
-    let poly = indef.translate(knot0.y - indef.evaluate(knot0.x));
+    poly.translate(knot0.y - poly.evaluate(knot0.x));
     Segment { end, poly }
 }
 

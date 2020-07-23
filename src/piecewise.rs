@@ -45,11 +45,8 @@ impl<T: HasDerivative> HasDerivative for Segment<T> {
 }
 
 impl<T: Translate> Translate for Segment<T> {
-    fn translate(&self, v: f64) -> Self {
-        Segment {
-            end: self.end,
-            poly: self.poly.translate(v),
-        }
+    fn translate(&mut self, v: f64) {
+        self.poly.translate(v);
     }
 }
 
@@ -66,8 +63,9 @@ where
         }
     }
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
-        let indef = self.indefinite();
-        indef.translate(knot.y - indef.evaluate(knot.x))
+        let mut indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x));
+        indef
     }
 }
 
@@ -354,9 +352,9 @@ where
 }
 
 impl<T: Translate> Translate for Piecewise<T> {
-    fn translate(&self, v: f64) -> Self {
-        Piecewise {
-            segments: self.segments.iter().map(|seg| seg.translate(v)).collect(),
+    fn translate(&mut self, v: f64) {
+        for seg in &mut self.segments {
+            seg.translate(v);
         }
     }
 }

@@ -20,8 +20,8 @@ impl<T: Evaluate> Evaluate for Log<T> {
 }
 
 impl<T: Translate> Translate for Log<T> {
-    fn translate(&self, v: f64) -> Self {
-        Log(self.0.translate(v))
+    fn translate(&mut self, v: f64) {
+        self.0.translate(v);
     }
 }
 
@@ -84,11 +84,8 @@ impl<T: Evaluate> Evaluate for IntOfLog<T> {
 }
 
 impl<T: Translate + Copy> Translate for IntOfLog<T> {
-    fn translate(&self, v: f64) -> Self {
-        IntOfLog {
-            k: self.k + v,
-            poly: self.poly,
-        }
+    fn translate(&mut self, v: f64) {
+        self.k += v;
     }
 }
 
@@ -293,12 +290,8 @@ impl Evaluate for IntOfLogPoly4 {
 }
 
 impl Translate for IntOfLogPoly4 {
-    fn translate(&self, v: f64) -> Self {
-        IntOfLogPoly4 {
-            k: self.k + v,
-            coeffs: self.coeffs,
-            u: self.u,
-        }
+    fn translate(&mut self, v: f64) {
+        self.k += v;
     }
 }
 
@@ -312,8 +305,9 @@ impl HasIntegral for Log<Poly0> {
     }
 
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
-        let indef = self.indefinite();
-        indef.translate(knot.y - indef.evaluate(knot.x))
+        let mut indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x));
+        indef
     }
 }
 
@@ -329,8 +323,9 @@ impl HasIntegral for Log<Poly1> {
     }
 
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
-        let indef = self.indefinite();
-        indef.translate(knot.y - indef.evaluate(knot.x))
+        let mut indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x));
+        indef
     }
 }
 
@@ -347,8 +342,9 @@ impl HasIntegral for Log<Poly2> {
     }
 
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
-        let indef = self.indefinite();
-        indef.translate(knot.y - indef.evaluate(knot.x))
+        let mut indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x));
+        indef
     }
 }
 
@@ -366,8 +362,9 @@ impl HasIntegral for Log<Poly3> {
     }
 
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
-        let indef = self.indefinite();
-        indef.translate(knot.y - indef.evaluate(knot.x))
+        let mut indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x));
+        indef
     }
 }
 
@@ -388,8 +385,9 @@ impl HasIntegral for Log<Poly4> {
     }
 
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
-        let indef = self.indefinite();
-        indef.translate(knot.y - indef.evaluate(knot.x))
+        let mut indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x));
+        indef
     }
 }
 
@@ -409,8 +407,9 @@ impl HasIntegral for Log<Poly5> {
     }
 
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
-        let indef = self.indefinite();
-        indef.translate(knot.y - indef.evaluate(knot.x))
+        let mut indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x));
+        indef
     }
 }
 
@@ -431,8 +430,9 @@ impl HasIntegral for Log<Poly6> {
     }
 
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
-        let indef = self.indefinite();
-        indef.translate(knot.y - indef.evaluate(knot.x))
+        let mut indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x));
+        indef
     }
 }
 
@@ -454,8 +454,9 @@ impl HasIntegral for Log<Poly7> {
     }
 
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
-        let indef = self.indefinite();
-        indef.translate(knot.y - indef.evaluate(knot.x))
+        let mut indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x));
+        indef
     }
 }
 
@@ -478,8 +479,9 @@ impl HasIntegral for Log<Poly8> {
     }
 
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
-        let indef = self.indefinite();
-        indef.translate(knot.y - indef.evaluate(knot.x))
+        let mut indef = self.indefinite();
+        indef.translate(knot.y - indef.evaluate(knot.x));
+        indef
     }
 }
 
