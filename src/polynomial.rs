@@ -549,7 +549,7 @@ impl Add for Poly6 {
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Default)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
 pub struct Poly7(pub [f64; 8]);
 impl Evaluate for Poly7 {
     fn evaluate(&self, x: f64) -> f64 {
