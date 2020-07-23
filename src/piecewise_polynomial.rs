@@ -94,6 +94,14 @@ impl<T> Segment<T> {
     }
 }
 
+/// A piecewise-defined function.
+///
+/// The pieces are functions of type `T`.  This type doesn't provide any
+/// guarantees that the function is smooth at the knots - the user must
+/// ensure this for themself.
+///
+/// The following invariant must hold for all i: `segments[i].end <
+/// segments[i+1].end`.
 #[derive(Debug, PartialEq, Clone)]
 pub struct Piecewise<T> {
     pub segments: Vec<Segment<T>>,
