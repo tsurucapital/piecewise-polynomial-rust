@@ -27,13 +27,12 @@ where
 {
     type Output = Self;
     fn mul(self, rhs: f64) -> Self::Output {
-        Segment{
+        Segment {
             end: self.end,
             poly: self.poly * rhs,
         }
     }
 }
-
 
 impl<T: HasDerivative> HasDerivative for Segment<T> {
     type DerivativeOf = Segment<T::DerivativeOf>;
@@ -74,7 +73,7 @@ where
 
 impl<T> Segment<T> {
     #[inline]
-    pub fn integral_iter<'a, I>(
+    pub fn integral_iter_ref<'a, I>(
         segments: I,
         knot0: Knot,
     ) -> impl Iterator<Item = Segment<T::IntegralOf>> + 'a
@@ -82,6 +81,28 @@ impl<T> Segment<T> {
         T: HasIntegral + 'a,
         T::IntegralOf: Translate,
         I: IntoIterator<Item = &'a Segment<T>> + 'a,
+    {
+        let mut knot = knot0;
+        segments.into_iter().map(move |seg| {
+            let int = seg.integral(knot);
+            knot = Knot {
+                x: int.end,
+                y: int.evaluate(int.end),
+            };
+            int
+        })
+    }
+
+    #[inline]
+    /// See `integral_iter_ref` if you have references.
+    pub fn integral_iter<I>(
+        segments: I,
+        knot0: Knot,
+    ) -> impl Iterator<Item = Segment<T::IntegralOf>>
+    where
+        T: HasIntegral,
+        T::IntegralOf: Translate,
+        I: IntoIterator<Item = Segment<T>>,
     {
         let mut knot = knot0;
         segments.into_iter().map(move |seg| {
@@ -306,7 +327,7 @@ where
         // Everything here seems very inefficient. I think Piecewise
         // should also be able to accept slices.
         let res_vec = {
-            let p_tail_int = Segment::integral_iter(
+            let p_tail_int = Segment::integral_iter_ref(
                 &self.segments[1..],
                 Knot {
                     x: indef_0.end,
@@ -325,7 +346,7 @@ where
         // Slightly slower than manually inlined version... but only slightly;
         // perhaps come back to this.
         Piecewise {
-            segments: Segment::integral_iter(&self.segments, knot0).collect(),
+            segments: Segment::integral_iter_ref(&self.segments, knot0).collect(),
         }
     }
 }
