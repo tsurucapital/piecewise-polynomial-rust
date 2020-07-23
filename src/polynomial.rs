@@ -48,7 +48,7 @@ where
 {
     let mut iter = coeffs.into_iter().rev();
     match iter.next() {
-        None => return 0.0,
+        None => 0.0,
         Some(&first) => iter.fold(first, |acc, &e| acc.mul_add(v, e)),
     }
 }

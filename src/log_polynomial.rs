@@ -394,7 +394,7 @@ impl HasIntegral for Log<Poly4> {
         IntOfLogPoly4 {
             k: 0.0,
             coeffs: [a, b, c, d],
-            u: u,
+            u,
         }
     }
 

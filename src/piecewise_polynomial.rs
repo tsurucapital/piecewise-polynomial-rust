@@ -224,7 +224,7 @@ impl<T: Evaluate> Piecewise<T> {
     /// points. When the latter is sufficiently densely wrt the
     /// former, this is faster than doing a binary search of the
     /// segments every time, as evaluate does.
-    pub fn evaluate_v(&self, xs: &Vec<f64>) -> Vec<f64> {
+    pub fn evaluate_v(&self, xs: &[f64]) -> Vec<f64> {
         assert!(!self.segments.is_empty(), "no segments to pick from!");
 
         let find_seg = |start: usize, x: f64| -> usize {
