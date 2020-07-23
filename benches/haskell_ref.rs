@@ -1,9 +1,6 @@
 use criterion::Throughput::Elements;
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
-use piecewise_polynomial::constrained_spline_interpolation::*;
-use piecewise_polynomial::linear_interpolation::*;
-use piecewise_polynomial::piecewise_polynomial::*;
-use piecewise_polynomial::polynomial::*;
+use piecewise_polynomial::*;
 
 fn xs(elems: u32) -> Vec<f64> {
     (0..elems).map(f64::from).collect()

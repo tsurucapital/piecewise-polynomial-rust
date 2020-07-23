@@ -1,6 +1,5 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use piecewise_polynomial::piecewise_polynomial::*;
-use piecewise_polynomial::polynomial::*;
+use piecewise_polynomial::*;
 
 pub fn bench_evaluate_piecewise_poly8(c: &mut Criterion) {
     let poly = Piecewise {

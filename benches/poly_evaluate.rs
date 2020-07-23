@@ -1,6 +1,5 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use piecewise_polynomial::log_polynomial::*;
-use piecewise_polynomial::polynomial::*;
+use piecewise_polynomial::*;
 
 pub fn bench_evaluate_0(c: &mut Criterion) {
     let poly = Poly0(7.0);
