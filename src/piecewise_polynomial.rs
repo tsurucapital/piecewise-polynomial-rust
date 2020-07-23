@@ -20,6 +20,20 @@ impl<T: Evaluate> Evaluate for Segment<T> {
     }
 }
 
+impl<T> Mul<f64> for Segment<T>
+where
+    T: Mul<f64, Output = T> + Copy,
+{
+    type Output = Self;
+    fn mul(self, rhs: f64) -> Self::Output {
+        Segment{
+            end: self.end,
+            poly: self.poly * rhs,
+        }
+    }
+}
+
+
 impl<T: HasDerivative> HasDerivative for Segment<T> {
     type DerivativeOf = Segment<<T as HasDerivative>::DerivativeOf>;
     fn derivative(&self) -> Self::DerivativeOf {
@@ -95,7 +109,7 @@ impl<T> Default for Piecewise<T> {
 
 impl<T> Mul<f64> for Piecewise<T>
 where
-    T: Mul<f64, Output = T> + Copy,
+    Segment<T>: Mul<f64, Output = Segment<T>> + Copy,
 {
     type Output = Self;
     fn mul(self, rhs: f64) -> Self::Output {
@@ -103,10 +117,7 @@ where
             segments: self
                 .segments
                 .iter()
-                .map(|seg| Segment {
-                    end: seg.end,
-                    poly: seg.poly * rhs,
-                })
+                .map(|seg| *seg * rhs)
                 .collect(),
         }
     }
