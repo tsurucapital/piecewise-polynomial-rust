@@ -1,4 +1,5 @@
 use crate::polynomial::*;
+use approx::{AbsDiffEq, RelativeEq};
 use arbitrary::Arbitrary;
 use std::cmp::Ordering;
 use std::iter;
@@ -66,6 +67,34 @@ where
         let mut indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x));
         indef
+    }
+}
+
+impl<T> AbsDiffEq for Segment<T>
+where
+    T: AbsDiffEq<Epsilon = f64>,
+{
+    type Epsilon = f64;
+    fn default_epsilon() -> Self::Epsilon {
+        <Self::Epsilon as AbsDiffEq>::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
+        self.end.abs_diff_eq(&other.end, eps) && self.poly.abs_diff_eq(&other.poly, eps)
+    }
+}
+
+impl<T> RelativeEq for Segment<T>
+where
+    T: AbsDiffEq<Epsilon = f64> + RelativeEq,
+{
+    fn default_max_relative() -> Self::Epsilon {
+        <Self::Epsilon as RelativeEq>::default_max_relative()
+    }
+
+    fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+        self.end.relative_eq(&other.end, eps, max_relative)
+            && self.poly.relative_eq(&other.poly, eps, max_relative)
     }
 }
 
@@ -146,6 +175,34 @@ impl<T: Arbitrary> Arbitrary for Piecewise<T> {
             })
             .collect::<arbitrary::Result<Vec<_>>>()?;
         Ok(Piecewise { segments })
+    }
+}
+
+impl<T> AbsDiffEq for Piecewise<T>
+where
+    T: PartialEq + AbsDiffEq<Epsilon = f64>,
+{
+    type Epsilon = f64;
+    fn default_epsilon() -> Self::Epsilon {
+        <Self::Epsilon as AbsDiffEq>::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
+        self.segments.abs_diff_eq(&other.segments, eps)
+    }
+}
+
+impl<T> RelativeEq for Piecewise<T>
+where
+    T: AbsDiffEq<Epsilon = f64> + RelativeEq,
+{
+    fn default_max_relative() -> Self::Epsilon {
+        <Self::Epsilon as RelativeEq>::default_max_relative()
+    }
+
+    fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+        self.segments
+            .relative_eq(&other.segments, eps, max_relative)
     }
 }
 

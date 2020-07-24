@@ -1,3 +1,4 @@
+use approx::{AbsDiffEq, RelativeEq};
 use arbitrary::Arbitrary;
 use std::ops::{Add, Mul, Neg};
 
@@ -64,6 +65,27 @@ impl Translate for PolyN {
     }
 }
 
+impl AbsDiffEq for PolyN {
+    type Epsilon = f64;
+    fn default_epsilon() -> Self::Epsilon {
+        <Self::Epsilon as AbsDiffEq>::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
+        self.0.abs_diff_eq(&other.0, eps)
+    }
+}
+
+impl RelativeEq for PolyN {
+    fn default_max_relative() -> Self::Epsilon {
+        <Self::Epsilon as RelativeEq>::default_max_relative()
+    }
+
+    fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+        self.0.relative_eq(&other.0, eps, max_relative)
+    }
+}
+
 /// Rank-0 polynomal
 ///
 /// Evaluated using manually unrolled Estin's scheme.
@@ -117,6 +139,27 @@ impl Add for Poly0 {
     }
 }
 
+impl AbsDiffEq for Poly0 {
+    type Epsilon = f64;
+    fn default_epsilon() -> Self::Epsilon {
+        <Self::Epsilon as AbsDiffEq>::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
+        self.0.abs_diff_eq(&other.0, eps)
+    }
+}
+
+impl RelativeEq for Poly0 {
+    fn default_max_relative() -> Self::Epsilon {
+        <Self::Epsilon as RelativeEq>::default_max_relative()
+    }
+
+    fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+        self.0.relative_eq(&other.0, eps, max_relative)
+    }
+}
+
 /// Rank-1 polynomal
 ///
 /// Evaluated using manually unrolled Estin's scheme.
@@ -167,6 +210,27 @@ impl Add for Poly1 {
     type Output = Self;
     fn add(self, other: Self) -> Self {
         Poly1([self.0[0] + other.0[0], self.0[1] + other.0[1]])
+    }
+}
+
+impl AbsDiffEq for Poly1 {
+    type Epsilon = f64;
+    fn default_epsilon() -> Self::Epsilon {
+        <Self::Epsilon as AbsDiffEq>::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
+        self.0.abs_diff_eq(&other.0, eps)
+    }
+}
+
+impl RelativeEq for Poly1 {
+    fn default_max_relative() -> Self::Epsilon {
+        <Self::Epsilon as RelativeEq>::default_max_relative()
+    }
+
+    fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+        self.0.relative_eq(&other.0, eps, max_relative)
     }
 }
 
@@ -227,6 +291,27 @@ impl Add for Poly2 {
             self.0[1] + other.0[1],
             self.0[2] + other.0[2],
         ])
+    }
+}
+
+impl AbsDiffEq for Poly2 {
+    type Epsilon = f64;
+    fn default_epsilon() -> Self::Epsilon {
+        <Self::Epsilon as AbsDiffEq>::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
+        self.0.abs_diff_eq(&other.0, eps)
+    }
+}
+
+impl RelativeEq for Poly2 {
+    fn default_max_relative() -> Self::Epsilon {
+        <Self::Epsilon as RelativeEq>::default_max_relative()
+    }
+
+    fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+        self.0.relative_eq(&other.0, eps, max_relative)
     }
 }
 
@@ -304,6 +389,27 @@ impl Add for Poly3 {
             self.0[2] + other.0[2],
             self.0[3] + other.0[3],
         ])
+    }
+}
+
+impl AbsDiffEq for Poly3 {
+    type Epsilon = f64;
+    fn default_epsilon() -> Self::Epsilon {
+        <Self::Epsilon as AbsDiffEq>::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
+        self.0.abs_diff_eq(&other.0, eps)
+    }
+}
+
+impl RelativeEq for Poly3 {
+    fn default_max_relative() -> Self::Epsilon {
+        <Self::Epsilon as RelativeEq>::default_max_relative()
+    }
+
+    fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+        self.0.relative_eq(&other.0, eps, max_relative)
     }
 }
 
@@ -386,6 +492,27 @@ impl Add for Poly4 {
             self.0[3] + other.0[3],
             self.0[4] + other.0[4],
         ])
+    }
+}
+
+impl AbsDiffEq for Poly4 {
+    type Epsilon = f64;
+    fn default_epsilon() -> Self::Epsilon {
+        <Self::Epsilon as AbsDiffEq>::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
+        self.0.abs_diff_eq(&other.0, eps)
+    }
+}
+
+impl RelativeEq for Poly4 {
+    fn default_max_relative() -> Self::Epsilon {
+        <Self::Epsilon as RelativeEq>::default_max_relative()
+    }
+
+    fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+        self.0.relative_eq(&other.0, eps, max_relative)
     }
 }
 
@@ -477,6 +604,27 @@ impl Add for Poly5 {
             self.0[4] + other.0[4],
             self.0[5] + other.0[5],
         ])
+    }
+}
+
+impl AbsDiffEq for Poly5 {
+    type Epsilon = f64;
+    fn default_epsilon() -> Self::Epsilon {
+        <Self::Epsilon as AbsDiffEq>::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
+        self.0.abs_diff_eq(&other.0, eps)
+    }
+}
+
+impl RelativeEq for Poly5 {
+    fn default_max_relative() -> Self::Epsilon {
+        <Self::Epsilon as RelativeEq>::default_max_relative()
+    }
+
+    fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+        self.0.relative_eq(&other.0, eps, max_relative)
     }
 }
 
@@ -572,6 +720,27 @@ impl Add for Poly6 {
             self.0[5] + other.0[5],
             self.0[6] + other.0[6],
         ])
+    }
+}
+
+impl AbsDiffEq for Poly6 {
+    type Epsilon = f64;
+    fn default_epsilon() -> Self::Epsilon {
+        <Self::Epsilon as AbsDiffEq>::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
+        self.0.abs_diff_eq(&other.0, eps)
+    }
+}
+
+impl RelativeEq for Poly6 {
+    fn default_max_relative() -> Self::Epsilon {
+        <Self::Epsilon as RelativeEq>::default_max_relative()
+    }
+
+    fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+        self.0.relative_eq(&other.0, eps, max_relative)
     }
 }
 
@@ -674,6 +843,27 @@ impl Add for Poly7 {
     }
 }
 
+impl AbsDiffEq for Poly7 {
+    type Epsilon = f64;
+    fn default_epsilon() -> Self::Epsilon {
+        <Self::Epsilon as AbsDiffEq>::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
+        self.0.abs_diff_eq(&other.0, eps)
+    }
+}
+
+impl RelativeEq for Poly7 {
+    fn default_max_relative() -> Self::Epsilon {
+        <Self::Epsilon as RelativeEq>::default_max_relative()
+    }
+
+    fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+        self.0.relative_eq(&other.0, eps, max_relative)
+    }
+}
+
 /// Rank-8 polynomal
 ///
 /// Evaluated using manually unrolled Estin's scheme.
@@ -754,6 +944,27 @@ impl Add for Poly8 {
             self.0[7] + other.0[7],
             self.0[8] + other.0[8],
         ])
+    }
+}
+
+impl AbsDiffEq for Poly8 {
+    type Epsilon = f64;
+    fn default_epsilon() -> Self::Epsilon {
+        <Self::Epsilon as AbsDiffEq>::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
+        self.0.abs_diff_eq(&other.0, eps)
+    }
+}
+
+impl RelativeEq for Poly8 {
+    fn default_max_relative() -> Self::Epsilon {
+        <Self::Epsilon as RelativeEq>::default_max_relative()
+    }
+
+    fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+        self.0.relative_eq(&other.0, eps, max_relative)
     }
 }
 

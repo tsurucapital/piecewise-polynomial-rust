@@ -1,4 +1,5 @@
 use crate::polynomial::*;
+use approx::{AbsDiffEq, RelativeEq};
 use std::ops::{Add, Mul, Neg};
 
 /// Polynomial of natural log of x
@@ -22,6 +23,33 @@ impl<T: Evaluate> Evaluate for Log<T> {
 impl<T: Translate> Translate for Log<T> {
     fn translate(&mut self, v: f64) {
         self.0.translate(v);
+    }
+}
+
+impl<T> AbsDiffEq for Log<T>
+where
+    T: PartialEq + AbsDiffEq<Epsilon = f64>,
+{
+    type Epsilon = f64;
+    fn default_epsilon() -> Self::Epsilon {
+        <Self::Epsilon as AbsDiffEq>::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
+        self.0.abs_diff_eq(&other.0, eps)
+    }
+}
+
+impl<T> RelativeEq for Log<T>
+where
+    T: AbsDiffEq<Epsilon = f64> + RelativeEq,
+{
+    fn default_max_relative() -> Self::Epsilon {
+        <Self::Epsilon as RelativeEq>::default_max_relative()
+    }
+
+    fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+        self.0.relative_eq(&other.0, eps, max_relative)
     }
 }
 
@@ -89,6 +117,34 @@ impl<T: Translate + Copy> Translate for IntOfLog<T> {
     }
 }
 
+impl<T> AbsDiffEq for IntOfLog<T>
+where
+    T: PartialEq + AbsDiffEq<Epsilon = f64>,
+{
+    type Epsilon = f64;
+    fn default_epsilon() -> Self::Epsilon {
+        <Self::Epsilon as AbsDiffEq>::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
+        self.k.abs_diff_eq(&other.k, eps) && self.poly.abs_diff_eq(&other.poly, eps)
+    }
+}
+
+impl<T> RelativeEq for IntOfLog<T>
+where
+    T: AbsDiffEq<Epsilon = f64> + RelativeEq,
+{
+    fn default_max_relative() -> Self::Epsilon {
+        <Self::Epsilon as RelativeEq>::default_max_relative()
+    }
+
+    fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+        self.k.relative_eq(&other.k, eps, max_relative)
+            && self.poly.relative_eq(&other.poly, eps, max_relative)
+    }
+}
+
 #[derive(Debug, PartialEq, Clone, Copy, Default)]
 pub struct IntOfLogPoly4 {
     /// Constant term
@@ -142,6 +198,31 @@ impl Mul<f64> for IntOfLogPoly4 {
             ],
             u: self.u * rhs,
         }
+    }
+}
+
+impl AbsDiffEq for IntOfLogPoly4 {
+    type Epsilon = f64;
+    fn default_epsilon() -> Self::Epsilon {
+        <Self::Epsilon as AbsDiffEq>::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
+        self.k.abs_diff_eq(&other.k, eps)
+            && self.coeffs.abs_diff_eq(&other.coeffs, eps)
+            && self.u.abs_diff_eq(&other.u, eps)
+    }
+}
+
+impl RelativeEq for IntOfLogPoly4 {
+    fn default_max_relative() -> Self::Epsilon {
+        <Self::Epsilon as RelativeEq>::default_max_relative()
+    }
+
+    fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
+        self.k.relative_eq(&other.k, eps, max_relative)
+            && self.coeffs.relative_eq(&other.coeffs, eps, max_relative)
+            && self.u.relative_eq(&other.u, eps, max_relative)
     }
 }
 
