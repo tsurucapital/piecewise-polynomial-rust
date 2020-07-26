@@ -524,15 +524,17 @@ pub struct Poly5(pub [f64; 6]);
 impl Evaluate for Poly5 {
     fn evaluate(&self, x: f64) -> f64 {
         // P5(x) = (C0 + C1x) + (C2 + C3x) x2 + (C4 + C5x) x4
-        let x2 = x * x;
-        let x4 = x2 * x2;
         let c = self.0;
 
         let t0 = c[1].mul_add(x, c[0]);
         let t1 = c[3].mul_add(x, c[2]);
         let t2 = c[5].mul_add(x, c[4]);
 
-        t2.mul_add(x4, t1.mul_add(x2, t0))
+        let x2 = x * x;
+        let r = t1.mul_add(x2, t0);
+
+        let x4 = x2 * x2;
+        t2.mul_add(x4, r)
     }
 }
 impl HasDerivative for Poly5 {
@@ -752,15 +754,19 @@ pub struct Poly7(pub [f64; 8]);
 impl Evaluate for Poly7 {
     fn evaluate(&self, x: f64) -> f64 {
         // P7(x) = (C0 + C1x) + (C2 + C3x) x2 + ((C4 + C5x) + (C6 + C7x) x2)x4
-        let x2 = x * x;
-        let x4 = x2 * x2;
         let c = self.0;
 
         let t0 = c[1].mul_add(x, c[0]);
         let t1 = c[3].mul_add(x, c[2]);
-        let t2 = (c[7].mul_add(x, c[6])).mul_add(x2, c[5].mul_add(x, c[4]));
+        let t2 = c[5].mul_add(x, c[4]);
+        let t3 = c[7].mul_add(x, c[6]);
 
-        t2.mul_add(x4, t1.mul_add(x2, t0))
+        let x2 = x * x;
+        let left = t1.mul_add(x2, t0);
+        let right = t3.mul_add(x2, t2);
+
+        let x4 = x2 * x2;
+        right.mul_add(x4, left)
     }
 }
 impl HasDerivative for Poly7 {
@@ -872,17 +878,25 @@ pub struct Poly8(pub [f64; 9]);
 impl Evaluate for Poly8 {
     fn evaluate(&self, x: f64) -> f64 {
         // P8(x) = (C0 + C1x) + (C2 + C3x) x2 + ((C4 + C5x) + (C6 + C7x) x2)x4 + C8x8
-        let x2 = x * x;
-        let x4 = x2 * x2;
-        let x8 = x4 * x4;
         let c = self.0;
 
         let t0 = c[1].mul_add(x, c[0]);
         let t1 = c[3].mul_add(x, c[2]);
-        let t2 = (c[7].mul_add(x, c[6])).mul_add(x2, c[5].mul_add(x, c[4]));
-        let t3 = c[8];
+        let t2 = c[5].mul_add(x, c[4]);
+        let t3 = c[7].mul_add(x, c[6]);
 
-        t3.mul_add(x8, t2.mul_add(x4, t1.mul_add(x2, t0)))
+        // Left side
+        let x2 = x * x;
+        let left = t1.mul_add(x2, t0);
+        let right2 = t3.mul_add(x2, t2);
+
+        // Reduce right and add to left
+        let x4 = x2 * x2;
+        let right4 = right2.mul_add(x4, left);
+
+        // Finally add the x^8
+        let x8 = x4 * x4;
+        c[8].mul_add(x8, right4)
     }
 }
 
