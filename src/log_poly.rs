@@ -1,4 +1,4 @@
-use crate::polynomial::*;
+use crate::poly::*;
 use approx::{AbsDiffEq, RelativeEq};
 use std::ops::{Add, Mul, Neg};
 
@@ -355,7 +355,7 @@ impl Evaluate for IntOfLogPoly4 {
             let c2: f64 = self.coeffs[1];
             let c3: f64 = self.coeffs[2];
             let c4: f64 = self.coeffs[3];
-            let c5: f64 = self.u * crate::log_polynomial::taylor::exp_5_taylor(x);
+            let c5: f64 = self.u * taylor::exp_5_taylor(x);
 
             let t0 = c1.mul_add(x, c0);
             let t1 = c3.mul_add(x, c2);

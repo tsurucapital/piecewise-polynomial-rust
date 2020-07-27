@@ -1,5 +1,5 @@
 use crate::piecewise::*;
-use crate::polynomial::*;
+use crate::poly::*;
 use std::iter;
 
 /// Create a constrained cubic spline

@@ -1,11 +1,11 @@
-mod constrained_spline_interpolation;
-mod linear_interpolation;
-mod log_polynomial;
+mod linear;
+mod log_poly;
 mod piecewise;
-mod polynomial;
+mod poly;
+mod spline;
 
-pub use constrained_spline_interpolation::*;
-pub use linear_interpolation::*;
-pub use log_polynomial::*;
+pub use linear::*;
+pub use log_poly::*;
 pub use piecewise::*;
-pub use polynomial::*;
+pub use poly::*;
+pub use spline::*;

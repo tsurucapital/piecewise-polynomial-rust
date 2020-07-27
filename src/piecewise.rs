@@ -1,4 +1,4 @@
-use crate::polynomial::*;
+use crate::poly::*;
 use approx::{AbsDiffEq, RelativeEq};
 use arbitrary::Arbitrary;
 use std::cmp::Ordering;
@@ -419,7 +419,7 @@ impl<T: Translate> Translate for Piecewise<T> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::log_polynomial::*;
+    use crate::log_poly::*;
     use assert_approx_eq::assert_approx_eq;
 
     // We start tests from Poly1 because original implementation has

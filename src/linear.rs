@@ -1,5 +1,5 @@
 use crate::piecewise::*;
-use crate::polynomial::*;
+use crate::poly::*;
 
 /// Create a piecewise-linear function
 #[inline]
