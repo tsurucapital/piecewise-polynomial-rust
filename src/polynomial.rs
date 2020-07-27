@@ -972,7 +972,8 @@ impl RelativeEq for Poly8 {
 mod tests {
     // Test results taken from the reference Haskell implementation.
 
-    use crate::polynomial::*;
+    use super::*;
+
     #[test]
     fn evaluate_poly0() {
         let poly = Poly0(7.0);

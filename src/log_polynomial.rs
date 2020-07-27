@@ -568,16 +568,16 @@ impl HasIntegral for Log<Poly8> {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
     fn evaluate_log_poly0() {
-        use crate::log_polynomial::*;
         let poly = Log(Poly0(2.0));
         assert_eq!(poly.evaluate(7.0), 2.0);
     }
 
     #[test]
     fn integral_log_poly0() {
-        use crate::log_polynomial::*;
         let poly = Log(Poly0(2.0));
         let result = IntOfLog {
             k: 0.0,
@@ -589,14 +589,12 @@ mod tests {
 
     #[test]
     fn evaluate_log_poly1() {
-        use crate::log_polynomial::*;
         let poly = Log(Poly1([2.0, 3.0]));
         assert_eq!(poly.evaluate(7.0), 7.8377304471659395);
     }
 
     #[test]
     fn integral_log_poly1() {
-        use crate::log_polynomial::*;
         let poly = Log(Poly1([2.0, 3.0]));
         let result = IntOfLog {
             k: 3.0,
@@ -608,7 +606,6 @@ mod tests {
 
     #[test]
     fn evaluate_log_poly2() {
-        use crate::log_polynomial::*;
         use assert_approx_eq::assert_approx_eq;
         let poly = Log(Poly2([2.0, 3.0, 4.0]));
         assert_approx_eq!(poly.evaluate(7.0), 22.98399567995183, 1e-12);
@@ -616,7 +613,6 @@ mod tests {
 
     #[test]
     fn integral_log_poly2() {
-        use crate::log_polynomial::*;
         let poly = Log(Poly2([2.0, 3.0, 4.0]));
         let result = IntOfLog {
             k: -5.0,
@@ -628,7 +624,6 @@ mod tests {
 
     #[test]
     fn evaluate_log_poly3() {
-        use crate::log_polynomial::*;
         use assert_approx_eq::assert_approx_eq;
         let poly = Log(Poly3([2.0, 3.0, 4.0, 5.0]));
         assert_approx_eq!(poly.evaluate(7.0), 59.82558472590394, 1e-12);
@@ -636,7 +631,6 @@ mod tests {
 
     #[test]
     fn integral_log_poly3() {
-        use crate::log_polynomial::*;
         let poly = Log(Poly3([2.0, 3.0, 4.0, 5.0]));
         let result = IntOfLog {
             k: 25.0,
@@ -648,7 +642,6 @@ mod tests {
 
     #[test]
     fn evaluate_log_poly4() {
-        use crate::log_polynomial::*;
         use assert_approx_eq::assert_approx_eq;
         let poly = Log(Poly4([2.0, 3.0, 4.0, 5.0, 6.0]));
         assert_approx_eq!(poly.evaluate(7.0), 145.85409116411583, 1e-12);
@@ -656,7 +649,6 @@ mod tests {
 
     #[test]
     fn evaluate_int_of_log_poly_4() {
-        use crate::log_polynomial::*;
         use assert_approx_eq::assert_approx_eq;
         let poly = IntOfLogPoly4 {
             k: 1.0,
@@ -668,7 +660,6 @@ mod tests {
 
     #[test]
     fn integral_log_poly4() {
-        use crate::log_polynomial::*;
         let poly = Log(Poly4([2.0, 3.0, 4.0, 5.0, 6.0]));
         let result = IntOfLogPoly4 {
             k: 2.0,
@@ -681,7 +672,6 @@ mod tests {
 
     #[test]
     fn evaluate_log_poly5() {
-        use crate::log_polynomial::*;
         use assert_approx_eq::assert_approx_eq;
         let poly = Log(Poly5([2.0, 3.0, 4.0, 5.0, 6.0, 7.0]));
         assert_approx_eq!(poly.evaluate(7.0), 341.1584589146673, 1e-12);
@@ -689,7 +679,6 @@ mod tests {
 
     #[test]
     fn integral_log_poly5() {
-        use crate::log_polynomial::*;
         let poly = Log(Poly5([2.0, 3.0, 4.0, 5.0, 6.0, 7.0]));
         let result = IntOfLog {
             k: 721.0,
@@ -701,7 +690,6 @@ mod tests {
 
     #[test]
     fn evaluate_log_poly6() {
-        use crate::log_polynomial::*;
         use assert_approx_eq::assert_approx_eq;
         let poly = Log(Poly6([2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]));
         assert_approx_eq!(poly.evaluate(7.0), 775.4953176125293, 1e-12);
@@ -709,7 +697,6 @@ mod tests {
 
     #[test]
     fn integral_log_poly6() {
-        use crate::log_polynomial::*;
         let poly = Log(Poly6([2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]));
         let result = IntOfLog {
             k: -5039.0,
@@ -721,7 +708,6 @@ mod tests {
 
     #[test]
     fn evaluate_log_poly7() {
-        use crate::log_polynomial::*;
         use assert_approx_eq::assert_approx_eq;
         let poly = Log(Poly7([2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]));
         assert_approx_eq!(poly.evaluate(7.0), 1726.3233817426242, 1e-12);
@@ -729,7 +715,6 @@ mod tests {
 
     #[test]
     fn integral_log_poly7() {
-        use crate::log_polynomial::*;
         let poly = Log(Poly7([2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]));
         let result = IntOfLog {
             k: 40321.0,
@@ -743,7 +728,6 @@ mod tests {
 
     #[test]
     fn evaluate_log_poly8() {
-        use crate::log_polynomial::*;
         use assert_approx_eq::assert_approx_eq;
         let poly = Log(Poly8([2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]));
         assert_approx_eq!(poly.evaluate(7.0), 3782.130026184144, 1e-12);
@@ -751,7 +735,6 @@ mod tests {
 
     #[test]
     fn integral_log_poly8() {
-        use crate::log_polynomial::*;
         let poly = Log(Poly8([2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]));
         let result = IntOfLog {
             k: -362879.0,
