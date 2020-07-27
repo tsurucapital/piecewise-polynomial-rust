@@ -322,6 +322,7 @@ mod taylor {
         }
     }
 
+    #[cfg(test)]
     #[test]
     fn exp_tail_tailor_ref() {
         use assert_approx_eq::assert_approx_eq;
