@@ -421,15 +421,17 @@ pub struct Poly4(pub [f64; 5]);
 impl Evaluate for Poly4 {
     fn evaluate(&self, x: f64) -> f64 {
         // P4(x) = (C0 + C1x) + (C2 + C3x) x2 + C4x4
-        let x2 = x * x;
-        let x4 = x2 * x2;
         let c = self.0;
 
         let t0 = c[1].mul_add(x, c[0]);
         let t1 = c[3].mul_add(x, c[2]);
         let t2 = c[4];
 
-        t2.mul_add(x4, t1.mul_add(x2, t0))
+        let x2 = x * x;
+        let r = t1.mul_add(x2, t0);
+
+        let x4 = x2 * x2;
+        t2.mul_add(x4, r)
     }
 }
 impl HasDerivative for Poly4 {
