@@ -1,6 +1,6 @@
 use crate::poly::*;
 use approx::{AbsDiffEq, RelativeEq};
-use std::ops::{Add, Mul, Neg};
+use std::ops::{Add, Mul, Neg, Sub};
 
 /// Polynomial of natural log of x
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -196,6 +196,22 @@ impl Mul<f64> for IntOfLogPoly4 {
                 self.coeffs[3] * rhs,
             ],
             u: self.u * rhs,
+        }
+    }
+}
+
+impl Sub for IntOfLogPoly4 {
+    type Output = Self;
+    fn sub(self, other: Self) -> Self::Output {
+        IntOfLogPoly4 {
+            k: self.k - other.k,
+            coeffs: [
+                self.coeffs[0] - other.coeffs[0],
+                self.coeffs[1] - other.coeffs[1],
+                self.coeffs[2] - other.coeffs[2],
+                self.coeffs[3] - other.coeffs[3],
+            ],
+            u: self.u - other.u,
         }
     }
 }
