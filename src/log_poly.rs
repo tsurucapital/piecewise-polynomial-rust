@@ -154,17 +154,18 @@ pub struct IntOfLogPoly4 {
 
 impl Add for IntOfLogPoly4 {
     type Output = Self;
-    fn add(self, other: Self) -> Self::Output {
-        IntOfLogPoly4 {
-            k: self.k + other.k,
-            coeffs: [
-                self.coeffs[0] + other.coeffs[0],
-                self.coeffs[1] + other.coeffs[1],
-                self.coeffs[2] + other.coeffs[2],
-                self.coeffs[3] + other.coeffs[3],
-            ],
-            u: self.u + other.u,
-        }
+    fn add(mut self, other: Self) -> Self::Output {
+        self.k += other.k;
+        self.coeffs.iter_mut().zip(other.coeffs.iter()).for_each(|(l, r)| *l += r);
+        self.u += other.u;
+        self
+    }
+}
+
+impl Add<&IntOfLogPoly4> for &IntOfLogPoly4 {
+    type Output = IntOfLogPoly4;
+    fn add(self, other: &IntOfLogPoly4) -> Self::Output {
+        *self + *other
     }
 }
 
@@ -202,17 +203,18 @@ impl Mul<f64> for IntOfLogPoly4 {
 
 impl Sub for IntOfLogPoly4 {
     type Output = Self;
-    fn sub(self, other: Self) -> Self::Output {
-        IntOfLogPoly4 {
-            k: self.k - other.k,
-            coeffs: [
-                self.coeffs[0] - other.coeffs[0],
-                self.coeffs[1] - other.coeffs[1],
-                self.coeffs[2] - other.coeffs[2],
-                self.coeffs[3] - other.coeffs[3],
-            ],
-            u: self.u - other.u,
-        }
+    fn sub(mut self, other: Self) -> Self::Output {
+        self.k -= other.k;
+        self.coeffs.iter_mut().zip(other.coeffs.iter()).for_each(|(l, r)| *l -= r);
+        self.u -= other.u;
+        self
+    }
+}
+
+impl Sub<&IntOfLogPoly4> for &IntOfLogPoly4 {
+    type Output = IntOfLogPoly4;
+    fn sub(self, other: &IntOfLogPoly4) -> Self::Output {
+        *self - *other
     }
 }
 

@@ -240,9 +240,12 @@ where
     }
 }
 
-impl<T: Add<Output = T> + Copy> Add for Piecewise<T> {
-    type Output = Self;
-    fn add(self, other: Piecewise<T>) -> Self::Output {
+impl<'a, 'b, T> Add<&'b Piecewise<T>> for &'a Piecewise<T>
+where
+    &'a T: Add<&'b T, Output = T>,
+{
+    type Output = Piecewise<T>;
+    fn add(self, other: &'b Piecewise<T>) -> Self::Output {
         let mut res = Vec::with_capacity(self.segments.len() + other.segments.len() - 1);
 
         let mut i = 0;
@@ -287,7 +290,7 @@ impl<T: Add<Output = T> + Copy> Add for Piecewise<T> {
                 end,
                 // I feel that copying here is silly: maybe we want to
                 // implement add on the references of polynomials...
-                poly: a.poly + b.poly,
+                poly: &a.poly + &b.poly,
             };
 
             res.push(ab);
@@ -297,17 +300,6 @@ impl<T: Add<Output = T> + Copy> Add for Piecewise<T> {
         }
 
         Piecewise { segments: res }
-    }
-}
-
-// Neg based impl
-impl<T> Sub for Piecewise<T>
-where
-    T: Neg<Output = T> + Add<Output = T> + Copy,
-{
-    type Output = Self;
-    fn sub(self, other: Piecewise<T>) -> Self::Output {
-        self + other.neg()
     }
 }
 
@@ -341,6 +333,71 @@ impl<T: Evaluate> Evaluate for Piecewise<T> {
         self.segments[segment_ix].evaluate(x)
     }
 }
+
+
+impl<'a, 'b, T> Sub<&'b Piecewise<T>> for &'a Piecewise<T>
+where
+    &'a T: Sub<&'b T, Output = T>,
+{
+    type Output = Piecewise<T>;
+    fn sub(self, other: &'b Piecewise<T>) -> Self::Output {
+        let mut res = Vec::with_capacity(self.segments.len() + other.segments.len() - 1);
+
+        let mut i = 0;
+        let mut j = 0;
+        let i_max = self.segments.len() - 1;
+        let j_max = other.segments.len() - 1;
+
+        loop {
+            let a = &self.segments[i];
+            let b = &other.segments[j];
+            let a_last = i >= i_max;
+            let b_last = j >= j_max;
+
+            // Unlike the Haskell implementation, panic on NaN &c.
+            let end = match a.end.partial_cmp(&b.end).unwrap() {
+                Ordering::Less => {
+                    if a_last {
+                        j += 1;
+                        b.end
+                    } else {
+                        i += 1;
+                        a.end
+                    }
+                }
+                Ordering::Greater => {
+                    if b_last {
+                        i += 1;
+                        a.end
+                    } else {
+                        j += 1;
+                        b.end
+                    }
+                }
+                Ordering::Equal => {
+                    i = i_max.min(i + 1);
+                    j = j_max.min(j + 1);
+                    a.end
+                }
+            };
+
+            let ab = Segment {
+                end,
+                // I feel that copying here is silly: maybe we want to
+                // implement add on the references of polynomials...
+                poly: &a.poly - &b.poly,
+            };
+
+            res.push(ab);
+            if a_last && b_last {
+                break;
+            }
+        }
+
+        Piecewise { segments: res }
+    }
+}
+
 
 impl<T: Evaluate> Piecewise<T> {
     /// Evaluate a piecewise at multiple successively increasing
