@@ -3,7 +3,7 @@ use approx::{AbsDiffEq, RelativeEq};
 use arbitrary::Arbitrary;
 use std::cmp::Ordering;
 use std::iter;
-use std::ops::{Add, Mul, Neg};
+use std::ops::{Add, Mul, Neg, Sub};
 
 /// A segment of a piecewise polynomial
 ///
@@ -297,6 +297,17 @@ impl<T: Add<Output = T> + Copy> Add for Piecewise<T> {
         }
 
         Piecewise { segments: res }
+    }
+}
+
+// Neg based impl
+impl<T> Sub for Piecewise<T>
+where
+    T: Neg<Output = T> + Add<Output = T> + Copy,
+{
+    type Output = Self;
+    fn sub(self, other: Piecewise<T>) -> Self::Output {
+        self + other.neg()
     }
 }
 
