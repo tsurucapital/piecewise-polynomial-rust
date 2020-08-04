@@ -440,7 +440,7 @@ where
 
 impl<T> HasIntegral for Piecewise<T>
 where
-    T: HasIntegral + Clone,
+    T: HasIntegral,
     T::IntegralOf: Translate,
 {
     type IntegralOf = Piecewise<T::IntegralOf>;
