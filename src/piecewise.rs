@@ -397,31 +397,31 @@ where
     }
 }
 
-
 impl<T: Evaluate> Piecewise<T> {
     /// Evaluate a piecewise at multiple successively increasing
     /// points. When the latter is sufficiently densely wrt the
     /// former, this is faster than doing a binary search of the
     /// segments every time, as evaluate does.
-    pub fn evaluate_v(&self, xs: &[f64]) -> Vec<f64> {
+    pub fn evaluate_v<'a, 'b, I>(&'a self, xs: I) -> impl Iterator<Item = f64> + 'a
+    where
+        I: IntoIterator<Item = f64>,
+        <I as IntoIterator>::IntoIter: 'b,
+        'b: 'a,
+    {
         assert!(!self.segments.is_empty(), "no segments to pick from!");
 
-        let find_seg = |start: usize, x: f64| -> usize {
-            let seg_ix = self.segments[start..].iter().position(|seg| x < seg.end);
-            // x is larger than all segments, use last segment. If we
-            // did find a segment to fit into, remember to add the
-            // offset we started looking from.
-            seg_ix.map_or(self.segments.len() - 1, |i| i + start)
-        };
-
         let mut prev_seg = 0;
-        xs.iter()
-            .map(|&x| {
-                let seg_ix = find_seg(prev_seg, x);
-                prev_seg = seg_ix;
-                self.segments[seg_ix].poly.evaluate(x)
-            })
-            .collect()
+
+        xs.into_iter().map(move |x| {
+            prev_seg = self.segments[prev_seg..]
+                .iter()
+                .position(|seg| x < seg.end)
+                // if x is larger than all segments, use last segment.
+                // If we did find a segment to fit into, remember to
+                // add the offset we started looking from.
+                .map_or(self.segments.len() - 1, |i| i + prev_seg);
+            self.segments[prev_seg].poly.evaluate(x)
+        })
     }
 }
 
