@@ -156,7 +156,10 @@ impl Add for IntOfLogPoly4 {
     type Output = Self;
     fn add(mut self, other: Self) -> Self::Output {
         self.k += other.k;
-        self.coeffs.iter_mut().zip(other.coeffs.iter()).for_each(|(l, r)| *l += r);
+        self.coeffs
+            .iter_mut()
+            .zip(other.coeffs.iter())
+            .for_each(|(l, r)| *l += r);
         self.u += other.u;
         self
     }
@@ -205,7 +208,10 @@ impl Sub for IntOfLogPoly4 {
     type Output = Self;
     fn sub(mut self, other: Self) -> Self::Output {
         self.k -= other.k;
-        self.coeffs.iter_mut().zip(other.coeffs.iter()).for_each(|(l, r)| *l -= r);
+        self.coeffs
+            .iter_mut()
+            .zip(other.coeffs.iter())
+            .for_each(|(l, r)| *l -= r);
         self.u -= other.u;
         self
     }

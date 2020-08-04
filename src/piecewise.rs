@@ -334,7 +334,6 @@ impl<T: Evaluate> Evaluate for Piecewise<T> {
     }
 }
 
-
 impl<'a, 'b, T> Sub<&'b Piecewise<T>> for &'a Piecewise<T>
 where
     &'a T: Sub<&'b T, Output = T>,
