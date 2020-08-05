@@ -106,6 +106,61 @@ pub fn bench_evaluate_int_of_log_anal_poly4(c: &mut Criterion) {
     });
 }
 
+pub fn bench_evaluate_piecewise_of_log_poly4(c: &mut Criterion) {
+    let poly = Piecewise {
+        segments: vec![
+            Segment {
+                end: 1.0,
+                poly: Log(Poly8([2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0])),
+            },
+            Segment {
+                end: 2.0,
+                poly: Log(Poly8([4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0])),
+            },
+            Segment {
+                end: 3.0,
+                poly: Log(Poly8([
+                    14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 110.0, 111.0, 112.0,
+                ])),
+            },
+            Segment {
+                end: 4.0,
+                poly: Log(Poly8([2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0])),
+            },
+            Segment {
+                end: 5.0,
+                poly: Log(Poly8([4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0])),
+            },
+            Segment {
+                end: 6.0,
+                poly: Log(Poly8([
+                    14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 110.0, 111.0, 112.0,
+                ])),
+            },
+            Segment {
+                end: 7.0,
+                poly: Log(Poly8([2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0])),
+            },
+            Segment {
+                end: 8.0,
+                poly: Log(Poly8([4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0])),
+            },
+            Segment {
+                end: 9.0,
+                poly: Log(Poly8([
+                    14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 110.0, 111.0, 112.0,
+                ])),
+            },
+        ],
+    };
+
+    // Pick some segment near end, don't match exactly.
+    let v = poly.segments[poly.segments.len() - 2].end - 0.1;
+    c.bench_function("bench_evaluate_piecewise_of_log_poly4", |b| {
+        b.iter(|| poly.evaluate(black_box(v)))
+    });
+}
+
 criterion_group!(
     benches,
     bench_evaluate_0,
@@ -119,5 +174,6 @@ criterion_group!(
     bench_evaluate_8,
     bench_evaluate_int_of_log_taylor_poly4,
     bench_evaluate_int_of_log_anal_poly4,
+    bench_evaluate_piecewise_of_log_poly4,
 );
 criterion_main!(benches);

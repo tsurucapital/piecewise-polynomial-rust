@@ -305,32 +305,12 @@ where
 
 impl<T: Evaluate> Evaluate for Piecewise<T> {
     fn evaluate(&self, x: f64) -> f64 {
-        let segment_ix = {
-            assert!(!self.segments.is_empty(), "no segments to pick from");
-            let close_ix = match self
-                .segments
-                .binary_search_by(|e| e.end.partial_cmp(&x).unwrap())
-            {
-                // We found exact end. The Haskell code doesn't use this:
-                // it uses the next segment instead. Though if we're
-                // exactly at the end and there isn't a next segment, we
-                // do use the last one.
-                Ok(exact_match_ix) => exact_match_ix + 1,
-                // We haven't found the segment, we want to use the
-                // "closest" one in some sense. The result tells us where
-                // we could insert to preserve ordering: in other words,
-                // the index of of the first element that's larger, or the
-                // end of the vector. The first element that's larger is
-                // precisely what we want. We just have to be slightly
-                // careful to not run off the end.
-                Err(closest) => closest,
-            };
-            let max_ix = self.segments.len() - 1;
-            // Make sure we don't run off the end if the closest
-            // segment was smaller equal, not larger.
-            max_ix.min(close_ix)
-        };
-        self.segments[segment_ix].evaluate(x)
+        assert!(!self.segments.is_empty(), "no segments to pick from");
+        match self.segments.iter().find(|seg| seg.end > x) {
+            // No segment, use last
+            None => self.segments.last().unwrap().evaluate(x),
+            Some(seg) => seg.evaluate(x),
+        }
     }
 }
 
@@ -1290,5 +1270,45 @@ mod tests {
             ],
         };
         assert_approx_eq!(poly.evaluate(7.0), 4625.849700383507, 1e-10);
+    }
+
+    #[test]
+    fn evaluate_piecewise_log_poly8_mid_seg() {
+        let poly = Piecewise {
+            segments: vec![
+                Segment {
+                    end: 1.0,
+                    poly: Log(Poly8([2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0])),
+                },
+                Segment {
+                    end: 5.0,
+                    poly: Log(Poly8([4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0])),
+                },
+                Segment {
+                    end: 10.0,
+                    poly: Log(Poly8([
+                        14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 110.0, 111.0, 112.0,
+                    ])),
+                },
+            ],
+        };
+        // Exact
+        assert_approx_eq!(
+            poly.evaluate(poly.segments[1].end),
+            10535.154755198095,
+            1e-10
+        );
+        // Slightly overshoot
+        assert_approx_eq!(
+            poly.evaluate(poly.segments[1].end + 0.1),
+            11499.374268098769,
+            1e-10
+        );
+        // Slightly undershoot
+        assert_approx_eq!(
+            poly.evaluate(poly.segments[1].end - 0.1),
+            1128.5314497684099,
+            1e-10
+        );
     }
 }
