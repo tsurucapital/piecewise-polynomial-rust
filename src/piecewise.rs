@@ -303,13 +303,85 @@ where
     }
 }
 
+/// An evaluator that holds few pieces of information
+///
+/// 1. The last segment index we have evaluated at.
+/// 2. The last value we have evaluated with
+/// 3. Reference to the polynomial we're evaluating at.
+///
+/// This allows us to drastically cut down number of searches for the
+/// segments in repeated evaluations of same piecewise polynomial.
+pub struct PiecewiseEvaluator<'a, T> {
+    poly: &'a Piecewise<T>,
+    last_evaluation: f64,
+    last_segment: usize,
+}
+
+impl<'a, T: Evaluate> PiecewiseEvaluator<'a, T> {
+    /// Creates the evaluator and gives result of initial run. From
+    /// there on, you should invoke evaluate method to progress it.
+    pub fn new(poly: &'a Piecewise<T>) -> Self {
+        // A bit of copy-paste of Piecewise evaluate...
+        assert!(!poly.segments.is_empty(), "no segments to pick from");
+        PiecewiseEvaluator {
+            poly,
+            last_evaluation: f64::NEG_INFINITY,
+            last_segment: 0,
+        }
+    }
+
+    // Does not live in Evaluated as types differ in mutability. I
+    // think the evaluate API needs fixing to support this with
+    // instances for references.
+    pub fn evaluate(&mut self, x: f64) -> f64 {
+        // If the new evaluation is for value higher than previous
+        // one, we want to start searching for the segment from the
+        // last segment we have recorded: we already know there is no
+        // point traversing anything earlier. If the value is lower, a
+        // previous segment might have been better suited so we try
+        // and find the crossing point segment.
+        let last_segment = if x >= self.last_evaluation {
+            match self.poly.segments[self.last_segment..]
+                .iter()
+                .position(|seg| seg.end > x)
+            {
+                None => self.poly.segments.len() - 1,
+                Some(seg_ix) => self.last_segment + seg_ix,
+            }
+        } else {
+            // Value is smaller so go backwards and find breaking
+            // point.
+            match self.poly.segments[0..self.last_segment]
+                .iter()
+                .rev()
+                .position(|seg| seg.end <= x)
+            {
+                // We ran back to the front and all segments were
+                // larger, therefore we use first segment.
+                None => 0,
+                // We found a the last segment (if we look from start)
+                // where `end <= x` holds therefore we know that the
+                // next segment must be `end > x`. Further, we know
+                // that there's at least one more segment: the one we
+                // started at. So the indexing is safe. Remember that
+                // we're going backwards so we have to adjust the
+                // index we find.
+                Some(seg_ix) => self.last_segment - seg_ix,
+            }
+        };
+        self.last_evaluation = x;
+        self.last_segment = last_segment;
+        self.poly.segments[last_segment].evaluate(x)
+    }
+}
+
 impl<T: Evaluate> Evaluate for Piecewise<T> {
     fn evaluate(&self, x: f64) -> f64 {
         assert!(!self.segments.is_empty(), "no segments to pick from");
-        match self.segments.iter().find(|seg| seg.end > x) {
+        match self.segments.iter().position(|seg| seg.end > x) {
             // No segment, use last
             None => self.segments.last().unwrap().evaluate(x),
-            Some(seg) => seg.evaluate(x),
+            Some(seg_ix) => self.segments[seg_ix].evaluate(x),
         }
     }
 }
