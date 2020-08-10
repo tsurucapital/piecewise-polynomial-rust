@@ -1,6 +1,6 @@
 use crate::poly::*;
 use approx::{AbsDiffEq, RelativeEq};
-use std::ops::{Add, Mul, Neg, Sub};
+use std::ops::{Add, Mul, MulAssign, Neg, Sub};
 
 /// Polynomial of natural log of x
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -10,6 +10,12 @@ impl<Scalar, T: Mul<Scalar>> Mul<Scalar> for Log<T> {
     type Output = Log<T::Output>;
     fn mul(self, rhs: Scalar) -> Self::Output {
         Log(self.0 * rhs)
+    }
+}
+
+impl<T: MulAssign<f64>> MulAssign<f64> for Log<T> {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.0 *= rhs;
     }
 }
 
@@ -91,6 +97,13 @@ where
             k: rhs * self.k,
             poly: self.poly * rhs,
         }
+    }
+}
+
+impl<T: MulAssign<f64>> MulAssign<f64> for IntOfLog<T> {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.k *= rhs;
+        self.poly *= rhs;
     }
 }
 

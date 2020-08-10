@@ -1,6 +1,6 @@
 use approx::{AbsDiffEq, RelativeEq};
 use arbitrary::Arbitrary;
-use std::ops::{Add, Mul, Neg};
+use std::ops::{Add, Mul, MulAssign, Neg};
 
 /// A join-point between two functions
 #[derive(Debug, PartialEq, Clone, Copy, Arbitrary)]
@@ -126,6 +126,13 @@ impl Mul<f64> for Poly0 {
         Poly0(self.0 * rhs)
     }
 }
+
+impl MulAssign<f64> for Poly0 {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.0 *= rhs;
+    }
+}
+
 impl Neg for Poly0 {
     type Output = Self;
     fn neg(self) -> Self {
@@ -200,6 +207,13 @@ impl Mul<f64> for Poly1 {
         Poly1([self.0[0] * rhs, self.0[1] * rhs])
     }
 }
+
+impl MulAssign<f64> for Poly1 {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.0.iter_mut().for_each(|x| *x *= rhs);
+    }
+}
+
 impl Neg for Poly1 {
     type Output = Self;
     fn neg(self) -> Self {
@@ -277,6 +291,13 @@ impl Mul<f64> for Poly2 {
         Poly2([self.0[0] * rhs, self.0[1] * rhs, self.0[2] * rhs])
     }
 }
+
+impl MulAssign<f64> for Poly2 {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.0.iter_mut().for_each(|x| *x *= rhs);
+    }
+}
+
 impl Neg for Poly2 {
     type Output = Self;
     fn neg(self) -> Self {
@@ -374,6 +395,13 @@ impl Mul<f64> for Poly3 {
         ])
     }
 }
+
+impl MulAssign<f64> for Poly3 {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.0.iter_mut().for_each(|x| *x *= rhs);
+    }
+}
+
 impl Neg for Poly3 {
     type Output = Self;
     fn neg(self) -> Self {
@@ -478,6 +506,13 @@ impl Mul<f64> for Poly4 {
         ])
     }
 }
+
+impl MulAssign<f64> for Poly4 {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.0.iter_mut().for_each(|x| *x *= rhs);
+    }
+}
+
 impl Neg for Poly4 {
     type Output = Self;
     fn neg(self) -> Self {
@@ -539,6 +574,7 @@ impl Evaluate for Poly5 {
         t2.mul_add(x4, r)
     }
 }
+
 impl HasDerivative for Poly5 {
     type DerivativeOf = Poly4;
     fn derivative(&self) -> Self::DerivativeOf {
@@ -591,6 +627,13 @@ impl Mul<f64> for Poly5 {
         ])
     }
 }
+
+impl MulAssign<f64> for Poly5 {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.0.iter_mut().for_each(|x| *x *= rhs);
+    }
+}
+
 impl Neg for Poly5 {
     type Output = Self;
     fn neg(self) -> Self {
@@ -706,6 +749,13 @@ impl Mul<f64> for Poly6 {
         ])
     }
 }
+
+impl MulAssign<f64> for Poly6 {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.0.iter_mut().for_each(|x| *x *= rhs);
+    }
+}
+
 impl Neg for Poly6 {
     type Output = Self;
     fn neg(self) -> Self {
@@ -829,6 +879,13 @@ impl Mul<f64> for Poly7 {
         ])
     }
 }
+
+impl MulAssign<f64> for Poly7 {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.0.iter_mut().for_each(|x| *x *= rhs);
+    }
+}
+
 impl Neg for Poly7 {
     type Output = Self;
     fn neg(self) -> Self {
@@ -940,6 +997,13 @@ impl Mul<f64> for Poly8 {
         ])
     }
 }
+
+impl MulAssign<f64> for Poly8 {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.0.iter_mut().for_each(|x| *x *= rhs);
+    }
+}
+
 impl Neg for Poly8 {
     type Output = Self;
     fn neg(self) -> Self {

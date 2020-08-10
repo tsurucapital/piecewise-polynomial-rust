@@ -3,7 +3,7 @@ use approx::{AbsDiffEq, RelativeEq};
 use arbitrary::Arbitrary;
 use std::cmp::Ordering;
 use std::iter;
-use std::ops::{Add, Mul, Neg, Sub};
+use std::ops::{Add, Mul, MulAssign, Neg, Sub};
 
 /// A segment of a piecewise polynomial
 ///
@@ -32,6 +32,18 @@ where
             end: self.end,
             poly: self.poly * rhs,
         }
+    }
+}
+
+impl<T: MulAssign<f64>> MulAssign<f64> for Segment<T> {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.poly *= rhs
+    }
+}
+
+impl<T: MulAssign<f64>> MulAssign<f64> for &mut Segment<T> {
+    fn mul_assign(&mut self, rhs: f64) {
+        self.poly *= rhs
     }
 }
 
@@ -224,6 +236,17 @@ where
             *seg = *seg * rhs;
         }
         self
+    }
+}
+
+impl<T: MulAssign<f64>> MulAssign<f64> for Piecewise<T>
+where
+    Segment<T>: MulAssign<f64>,
+{
+    fn mul_assign(&mut self, rhs: f64) {
+        for mut seg in &mut self.segments {
+            seg *= rhs;
+        }
     }
 }
 
@@ -559,6 +582,41 @@ mod tests {
             ],
         };
         assert_eq!(poly.evaluate(7.0), 39.0);
+    }
+
+    #[test]
+    fn mul_assign_piecewise_poly1() {
+        let mut poly = Piecewise {
+            segments: vec![
+                Segment {
+                    end: 1.0,
+                    poly: Poly1([2.0, 3.0]),
+                },
+                Segment {
+                    end: 2.0,
+                    poly: Poly1([4.0, 5.0]),
+                },
+            ],
+        };
+        let expected = Piecewise {
+            segments: vec![
+                Segment {
+                    end: 1.0,
+                    poly: Poly1([4.0, 6.0]),
+                },
+                Segment {
+                    end: 2.0,
+                    poly: Poly1([8.0, 10.0]),
+                },
+            ],
+        };
+        assert_eq!(
+            {
+                poly *= 2.0;
+                poly
+            },
+            expected
+        );
     }
 
     #[test]
