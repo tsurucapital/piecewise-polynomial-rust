@@ -415,7 +415,7 @@ where
 {
     type Output = Piecewise<T>;
     fn sub(self, other: &'b Piecewise<T>) -> Self::Output {
-        let mut res = Vec::with_capacity(self.segments.len() + other.segments.len() - 1);
+        let mut res = Vec::with_capacity(self.segments.len());
 
         let mut i = 0;
         let mut j = 0;
@@ -617,6 +617,76 @@ mod tests {
             },
             expected
         );
+    }
+
+    #[test]
+    fn sub_piecewise_poly1() {
+        let poly1 = Piecewise {
+            segments: vec![
+                Segment {
+                    end: 1.0,
+                    poly: IntOfLogPoly4 {
+                        k: 3.0,
+                        coeffs: [2.0, 3.0, 4.0, 5.0],
+                        u: 6.0,
+                    },
+                },
+                Segment {
+                    end: 2.0,
+                    poly: IntOfLogPoly4 {
+                        k: 4.0,
+                        coeffs: [2.5, 3.5, 4.5, 5.5],
+                        u: 6.5,
+                    },
+                },
+            ],
+        };
+        let poly2 = Piecewise {
+            segments: vec![
+                Segment {
+                    end: 1.0,
+                    poly: IntOfLogPoly4 {
+                        k: 3.0,
+                        coeffs: [2.0, 3.0, 4.0, 5.0],
+                        u: 6.0,
+                    },
+                },
+                Segment {
+                    end: 2.0,
+                    poly: IntOfLogPoly4 {
+                        k: 5.0,
+                        coeffs: [2.6, 4.7, 5.8, 6.5],
+                        u: 7.5,
+                    },
+                },
+            ],
+        };
+        let expected = Piecewise {
+            segments: vec![
+                Segment {
+                    end: 1.0,
+                    poly: IntOfLogPoly4 {
+                        k: 0.0,
+                        coeffs: [0.0, 0.0, 0.0, 0.0],
+                        u: 0.0,
+                    },
+                },
+                Segment {
+                    end: 2.0,
+                    poly: IntOfLogPoly4 {
+                        k: -1.0,
+                        coeffs: [
+                            -0.10000000000000009,
+                            -1.2000000000000002,
+                            -1.2999999999999998,
+                            -1.0,
+                        ],
+                        u: -1.0,
+                    },
+                },
+            ],
+        };
+        assert_eq!(&poly1 - &poly2, expected);
     }
 
     #[test]
