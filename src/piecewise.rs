@@ -415,7 +415,7 @@ where
 {
     type Output = Piecewise<T>;
     fn sub(self, other: &'b Piecewise<T>) -> Self::Output {
-        let mut res = Vec::with_capacity(self.segments.len());
+        let mut res = Vec::with_capacity(self.segments.len() + other.segments.len() - 1);
 
         let mut i = 0;
         let mut j = 0;
