@@ -1,9 +1,10 @@
 use approx::{AbsDiffEq, RelativeEq};
 use arbitrary::Arbitrary;
+use serde::{Deserialize, Serialize};
 use std::ops::{Add, Mul, MulAssign, Neg};
 
 /// A join-point between two functions
-#[derive(Debug, PartialEq, Clone, Copy, Arbitrary)]
+#[derive(Debug, PartialEq, Clone, Copy, Arbitrary, Serialize, Deserialize)]
 pub struct Knot {
     pub x: f64,
     pub y: f64,
