@@ -1,9 +1,10 @@
 use crate::poly::*;
 use approx::{AbsDiffEq, RelativeEq};
+use serde::{Deserialize, Serialize};
 use std::ops::{Add, Mul, MulAssign, Neg, Sub};
 
 /// Polynomial of natural log of x
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize)]
 pub struct Log<T>(pub T);
 
 impl<Scalar, T: Mul<Scalar>> Mul<Scalar> for Log<T> {
@@ -58,7 +59,7 @@ where
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize)]
 pub struct IntOfLog<T> {
     pub k: f64,
     pub poly: T,
@@ -157,7 +158,7 @@ where
     }
 }
 
-#[derive(Debug, PartialEq, Clone, Copy, Default)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Serialize, Deserialize)]
 pub struct IntOfLogPoly4 {
     /// Constant term
     pub k: f64,
