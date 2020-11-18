@@ -1,6 +1,7 @@
 use crate::poly::*;
 use approx::{AbsDiffEq, RelativeEq};
 use arbitrary::Arbitrary;
+use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
 use std::iter;
 use std::ops::{Add, Mul, MulAssign, Neg, Sub};
@@ -10,7 +11,7 @@ use std::ops::{Add, Mul, MulAssign, Neg, Sub};
 /// A segment is valid for _begin_ ≤ `x` < `end`, where _begin_ is implied
 /// by the previous segment if it exists, or for `x` < `end` if this is the
 /// first segment.
-#[derive(Debug, PartialEq, Clone, Copy)]
+#[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize)]
 pub struct Segment<T> {
     pub end: f64,
     pub poly: T,
@@ -165,7 +166,7 @@ impl<T> Segment<T> {
 ///
 /// * there is at least one segment
 /// * for all i: `segments[i].end < segments[i+1].end`
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct Piecewise<T> {
     pub segments: Vec<Segment<T>>,
 }
