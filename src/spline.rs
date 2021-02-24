@@ -79,6 +79,7 @@ fn segment(f_x0_dx: f64, knot_0: Knot, f_x1_dx: f64, knot_1: Knot) -> Segment<Po
 
     let d = (1.0 / 6.0) * (f_x1_dx_dx - f_x0_dx_dx) / dx;
     let c = (1.0 / 2.0) * (x1 * f_x0_dx_dx - x0 * f_x1_dx_dx) / dx;
+    #[allow(clippy::suspicious_operation_groupings)]
     let b = slope - c * (x1 + x0) - d * (x1 * x1 + x1 * x0 + x0x0);
     let a = y0 - b * x0 - c * x0x0 - d * x0x0 * x0;
 
