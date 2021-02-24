@@ -12,7 +12,8 @@ fn p1(elems: u32) -> Piecewise<Poly1> {
 }
 
 fn p3(elems: u32) -> Piecewise<Poly3> {
-    constrained_spline(xs(elems).iter().map(|&x| Knot { x: x, y: x }).collect())
+    let knots: Vec<_> = xs(elems).iter().map(|&x| Knot { x: x, y: x }).collect();
+    constrained_spline(&knots)
 }
 
 pub fn bench_map_eval_linear(c: &mut Criterion) {
@@ -38,7 +39,7 @@ pub fn bench_pp_eval_v_linear(c: &mut Criterion) {
         group.bench_with_input(
             BenchmarkId::from_parameter(size),
             &input,
-            |b, (p1_, xs_)| b.iter_with_large_drop(|| p1_.evaluate_v(&xs_)),
+            |b, (p1_, xs_)| b.iter_with_large_drop(|| p1_.evaluate_v(xs_.iter().copied())),
         );
     }
 }
@@ -55,7 +56,9 @@ pub fn bench_pp_eval_v_cubic(c: &mut Criterion) {
     let p3_ = p3(50);
     let xs_: Vec<f64> = black_box(xs(50));
 
-    c.bench_function("PP.evalV cubic", |b| b.iter(|| p3_.evaluate_v(&xs_)));
+    c.bench_function("PP.evalV cubic", |b| {
+        b.iter(|| p3_.evaluate_v(xs_.iter().copied()))
+    });
 }
 
 criterion_group!(
