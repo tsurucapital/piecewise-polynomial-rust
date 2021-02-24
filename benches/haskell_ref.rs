@@ -7,12 +7,12 @@ fn xs(elems: u32) -> Vec<f64> {
 }
 
 fn p1(elems: u32) -> Piecewise<Poly1> {
-    let e: Vec<_> = xs(elems).iter().map(|&x| Knot { x: x, y: x }).collect();
+    let e: Vec<_> = xs(elems).iter().map(|&x| Knot { x, y: x }).collect();
     linear(&e)
 }
 
 fn p3(elems: u32) -> Piecewise<Poly3> {
-    let knots: Vec<_> = xs(elems).iter().map(|&x| Knot { x: x, y: x }).collect();
+    let knots: Vec<_> = xs(elems).iter().map(|&x| Knot { x, y: x }).collect();
     constrained_spline(&knots)
 }
 
