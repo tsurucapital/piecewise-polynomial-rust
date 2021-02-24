@@ -7,13 +7,13 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-arbitrary = { version = "0.4", features = ["derive"] }
-approx = "0.3.2"
-serde = { version = "1.0", features = ["derive"] }
+arbitrary = { version = "0.4.7", features = ["derive"] }
+approx = "0.4.0"
+serde = { version = "1.0.123", features = ["derive"] }
 
 [dev-dependencies]
 assert_approx_eq = "1.1.0"
-criterion = "0.3.3"
+criterion = "0.3.4"
 
 [[bench]]
 name = "poly_evaluate"
