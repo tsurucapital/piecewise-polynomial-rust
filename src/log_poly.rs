@@ -1,3 +1,5 @@
+#![allow(clippy::many_single_char_names)]
+
 use crate::poly::*;
 use approx::{AbsDiffEq, RelativeEq};
 use serde::{Deserialize, Serialize};
@@ -605,6 +607,7 @@ impl HasIntegral for Log<Poly8> {
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)]
 mod tests {
     use super::*;
 
