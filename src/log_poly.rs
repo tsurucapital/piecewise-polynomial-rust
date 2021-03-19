@@ -607,6 +607,7 @@ impl HasIntegral for Log<Poly8> {
 }
 
 #[cfg(test)]
+#[allow(clippy::float_cmp)]
 mod tests {
     use super::*;
 
