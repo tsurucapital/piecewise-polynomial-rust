@@ -171,8 +171,8 @@ pub struct Piecewise<T> {
     pub segments: Vec<Segment<T>>,
 }
 
-impl<T: Arbitrary> Arbitrary for Piecewise<T> {
-    fn arbitrary(u: &mut arbitrary::Unstructured) -> arbitrary::Result<Self> {
+impl<'a, T: Arbitrary<'a>> Arbitrary<'a> for Piecewise<T> {
+    fn arbitrary(u: &mut arbitrary::Unstructured<'a>) -> arbitrary::Result<Self> {
         let mut ends = Vec::<f64>::arbitrary(u)?;
         if ends.is_empty() || !ends.iter().all(|x| x.is_normal()) {
             return Err(arbitrary::Error::IncorrectFormat);

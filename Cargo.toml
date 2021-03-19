@@ -7,7 +7,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-arbitrary = { version = "0.4.7", features = ["derive"] }
+arbitrary = { version = "1.0.0", features = ["derive"] }
 approx = "0.4.0"
 serde = { version = "1.0.123", features = ["derive"] }
 
