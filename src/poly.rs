@@ -90,7 +90,7 @@ impl RelativeEq for PolyN {
 /// Rank-0 polynomal
 ///
 /// Evaluated using manually unrolled Estin's scheme.
-#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary, Serialize, Deserialize)]
 pub struct Poly0(pub f64);
 impl Evaluate for Poly0 {
     fn evaluate(&self, _: f64) -> f64 {
@@ -171,7 +171,7 @@ impl RelativeEq for Poly0 {
 /// Rank-1 polynomal
 ///
 /// Evaluated using manually unrolled Estin's scheme.
-#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary, Serialize, Deserialize)]
 pub struct Poly1(pub [f64; 2]);
 impl Evaluate for Poly1 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -252,7 +252,7 @@ impl RelativeEq for Poly1 {
 /// Rank-2 polynomal
 ///
 /// Evaluated using manually unrolled Estin's scheme.
-#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary, Serialize, Deserialize)]
 pub struct Poly2(pub [f64; 3]);
 impl Evaluate for Poly2 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -340,7 +340,7 @@ impl RelativeEq for Poly2 {
 /// Rank-3 polynomal
 ///
 /// Evaluated using manually unrolled Estin's scheme.
-#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary, Serialize, Deserialize)]
 pub struct Poly3(pub [f64; 4]);
 impl Evaluate for Poly3 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -445,7 +445,7 @@ impl RelativeEq for Poly3 {
 /// Rank-4 polynomal
 ///
 /// Evaluated using manually unrolled Estin's scheme.
-#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary, Serialize, Deserialize)]
 pub struct Poly4(pub [f64; 5]);
 impl Evaluate for Poly4 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -557,7 +557,7 @@ impl RelativeEq for Poly4 {
 /// Rank-5 polynomal
 ///
 /// Evaluated using manually unrolled Estin's scheme.
-#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary, Serialize, Deserialize)]
 pub struct Poly5(pub [f64; 6]);
 impl Evaluate for Poly5 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -679,7 +679,7 @@ impl RelativeEq for Poly5 {
 /// Rank-6 polynomal
 ///
 /// Evaluated using manually unrolled Estin's scheme.
-#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary, Serialize, Deserialize)]
 pub struct Poly6(pub [f64; 7]);
 impl Evaluate for Poly6 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -802,7 +802,7 @@ impl RelativeEq for Poly6 {
 /// Rank-7 polynomal
 ///
 /// Evaluated using manually unrolled Estin's scheme.
-#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary, Serialize, Deserialize)]
 pub struct Poly7(pub [f64; 8]);
 impl Evaluate for Poly7 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -933,7 +933,7 @@ impl RelativeEq for Poly7 {
 /// Rank-8 polynomal
 ///
 /// Evaluated using manually unrolled Estin's scheme.
-#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary)]
+#[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary, Serialize, Deserialize)]
 pub struct Poly8(pub [f64; 9]);
 impl Evaluate for Poly8 {
     fn evaluate(&self, x: f64) -> f64 {
