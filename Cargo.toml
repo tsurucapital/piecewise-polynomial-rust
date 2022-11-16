@@ -3,6 +3,9 @@ name = "piecewise_polynomial"
 version = "0.1.0"
 authors = ["Mateusz Kowalczyk <fuuzetsu@fuuzetsu.co.uk>"]
 edition = "2018"
+license = "BSD-3-Clause"
+description = "Fitting and interpolation with piecewise polynomials"
+repository = "https://github.com/tsurucapital/piecewise-polynomial-rust"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
