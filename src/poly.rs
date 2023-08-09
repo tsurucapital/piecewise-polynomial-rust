@@ -754,16 +754,14 @@ impl Translate for Poly6 {
 impl HasIntegral for Poly6 {
     type IntegralOf = Poly7;
     fn indefinite(&self) -> Self::IntegralOf {
-        let dst = [
-            0.0,
-            self.0[0],
-            self.0[1] / 2.0,
-            self.0[2] / 3.0,
-            self.0[3] / 4.0,
-            self.0[4] / 5.0,
-            self.0[5] / 6.0,
-            self.0[6] / 7.0,
-        ];
+        let x0 = (wide::f64x4::new([0.0, self.0[0], self.0[1], self.0[2]])
+            * wide::f64x4::new([1.0, 1.0, 1.0 / 2.0, 1.0 / 3.0]))
+        .to_array();
+        let x1 = (wide::f64x4::new([self.0[3], self.0[4], self.0[5], self.0[6]])
+            * wide::f64x4::new([1.0 / 4.0, 1.0 / 5.0, 1.0 / 6.0, 1.0 / 7.0]))
+        .to_array();
+
+        let dst = [x0[0], x0[1], x0[2], x0[3], x1[0], x1[1], x1[2], x1[3]];
         Poly7(dst)
     }
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
