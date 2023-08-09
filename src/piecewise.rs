@@ -3,7 +3,6 @@ use approx::{AbsDiffEq, RelativeEq};
 use arbitrary::Arbitrary;
 use serde::{Deserialize, Serialize};
 use std::cmp::Ordering;
-use std::iter;
 use std::ops::{Add, Mul, MulAssign, Neg, Sub};
 
 /// A segment of a piecewise polynomial
@@ -521,6 +520,10 @@ where
     }
 }
 
+pub fn foo(p: &Piecewise<Poly1>) -> Piecewise<Poly2> {
+    p.indefinite()
+}
+
 impl<T> HasIntegral for Piecewise<T>
 where
     T: HasIntegral,
@@ -531,20 +534,20 @@ where
         if self.segments.is_empty() {
             return Default::default();
         }
-        let indef_0 = self.segments[0].indefinite();
-        // Everything here seems very inefficient. I think Piecewise
-        // should also be able to accept slices.
-        let res_vec = {
-            let p_tail_int = Segment::integral_iter_ref(
-                &self.segments[1..],
-                Knot {
-                    x: indef_0.end,
-                    y: indef_0.evaluate(indef_0.end),
-                },
-            );
+        let mut res_vec: Vec<Segment<<T as HasIntegral>::IntegralOf>> = Vec::default();
+        res_vec.reserve_exact(self.segments.len());
+        let ptr = res_vec.as_mut_ptr();
+        unsafe { ptr.write(self.segments[0].indefinite()) }
 
-            iter::once(indef_0).chain(p_tail_int).collect()
-        };
+        for i in 1..self.segments.len() {
+            let prev = unsafe { &*ptr.add(i - 1) };
+            let knot = Knot {
+                x: prev.end,
+                y: prev.evaluate(prev.end),
+            };
+
+            unsafe { ptr.add(i).write(self.segments[i].integral(knot)) };
+        }
 
         Piecewise { segments: res_vec }
     }
