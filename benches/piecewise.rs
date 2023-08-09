@@ -309,6 +309,55 @@ pub fn bench_integral_piecewise_poly7(c: &mut Criterion) {
     });
 }
 
+pub fn bench_indefinite_poly1(c: &mut Criterion) {
+    let poly = Poly1([2.0, 3.0]);
+    c.bench_function("bench_indefinite_poly1", |b| {
+        b.iter(|| black_box(&poly).indefinite())
+    });
+}
+
+pub fn bench_indefinite_poly2(c: &mut Criterion) {
+    let poly = Poly2([2.0, 3.0, 4.0]);
+    c.bench_function("bench_indefinite_poly2", |b| {
+        b.iter(|| black_box(&poly).indefinite())
+    });
+}
+
+pub fn bench_indefinite_poly3(c: &mut Criterion) {
+    let poly = Poly3([2.0, 3.0, 4.0, 5.0]);
+    c.bench_function("bench_indefinite_poly3", |b| {
+        b.iter(|| black_box(&poly).indefinite())
+    });
+}
+
+pub fn bench_indefinite_poly4(c: &mut Criterion) {
+    let poly = Poly4([2.0, 3.0, 4.0, 5.0, 6.0]);
+    c.bench_function("bench_indefinite_poly4", |b| {
+        b.iter(|| black_box(&poly).indefinite())
+    });
+}
+
+pub fn bench_indefinite_poly5(c: &mut Criterion) {
+    let poly = Poly5([2.0, 3.0, 4.0, 5.0, 6.0, 7.0]);
+    c.bench_function("bench_indefinite_poly5", |b| {
+        b.iter(|| black_box(&poly).indefinite())
+    });
+}
+
+pub fn bench_indefinite_poly6(c: &mut Criterion) {
+    let poly = Poly6([2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]);
+    c.bench_function("bench_indefinite_poly6", |b| {
+        b.iter(|| black_box(&poly).indefinite())
+    });
+}
+
+pub fn bench_indefinite_poly7(c: &mut Criterion) {
+    let poly = Poly7([2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]);
+    c.bench_function("bench_indefinite_poly7", |b| {
+        b.iter(|| black_box(&poly).indefinite())
+    });
+}
+
 criterion_group!(
     piecewise_benches,
     bench_evaluate_piecewise_poly8,
@@ -320,5 +369,12 @@ criterion_group!(
     bench_indefinite_piecewise_poly6,
     bench_indefinite_piecewise_poly7,
     bench_integral_piecewise_poly7,
+    bench_indefinite_poly1,
+    bench_indefinite_poly2,
+    bench_indefinite_poly3,
+    bench_indefinite_poly4,
+    bench_indefinite_poly5,
+    bench_indefinite_poly6,
+    bench_indefinite_poly7,
 );
 criterion_main!(piecewise_benches);
