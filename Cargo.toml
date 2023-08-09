@@ -9,6 +9,9 @@ repository = "https://github.com/tsurucapital/piecewise-polynomial-rust"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[lib]
+bench = false
+
 [dependencies]
 arbitrary = { version = "1.0.0", features = ["derive"] }
 approx = "0.5.0"
