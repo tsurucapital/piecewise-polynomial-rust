@@ -520,10 +520,6 @@ where
     }
 }
 
-pub fn foo(p: &Piecewise<Poly1>) -> Piecewise<Poly2> {
-    p.indefinite()
-}
-
 impl<T> HasIntegral for Piecewise<T>
 where
     T: HasIntegral,
@@ -534,20 +530,21 @@ where
         if self.segments.is_empty() {
             return Default::default();
         }
-        let mut res_vec: Vec<Segment<<T as HasIntegral>::IntegralOf>> = Vec::default();
-        res_vec.reserve_exact(self.segments.len());
-        let ptr = res_vec.as_mut_ptr();
-        unsafe { ptr.write(self.segments[0].indefinite()) }
 
-        for i in 1..self.segments.len() {
-            let prev = unsafe { &*ptr.add(i - 1) };
-            let knot = Knot {
-                x: prev.end,
-                y: prev.evaluate(prev.end),
-            };
+        let mut res_vec: Vec<Segment<<T as HasIntegral>::IntegralOf>> =
+            Vec::with_capacity(self.segments.len());
 
-            unsafe { ptr.add(i).write(self.segments[i].integral(knot)) };
-        }
+        let last = self.segments[1..]
+            .iter()
+            .fold(self.segments[0].indefinite(), |prev, seg| {
+                let knot = Knot {
+                    x: prev.end,
+                    y: prev.evaluate(prev.end),
+                };
+                res_vec.push(prev);
+                seg.integral(knot)
+            });
+        res_vec.push(last);
 
         Piecewise { segments: res_vec }
     }
