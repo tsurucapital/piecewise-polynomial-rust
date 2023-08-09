@@ -293,8 +293,11 @@ impl Translate for Poly2 {
 impl HasIntegral for Poly2 {
     type IntegralOf = Poly3;
     fn indefinite(&self) -> Self::IntegralOf {
-        let dst = [0.0, self.0[0], self.0[1] / 2.0, self.0[2] / 3.0];
-        Poly3(dst)
+        Poly3(
+            (wide::f64x4::new([0.0, self.0[0], self.0[1], self.0[2]])
+                * wide::f64x4::new([1.0, 1.0, 1.0 / 2.0, 1.0 / 3.0]))
+            .to_array(),
+        )
     }
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let mut indef = self.indefinite();
