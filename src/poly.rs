@@ -390,13 +390,10 @@ impl Translate for Poly3 {
 impl HasIntegral for Poly3 {
     type IntegralOf = Poly4;
     fn indefinite(&self) -> Self::IntegralOf {
-        let dst = [
-            0.0,
-            self.0[0],
-            self.0[1] / 2.0,
-            self.0[2] / 3.0,
-            self.0[3] / 4.0,
-        ];
+        let x0 = (wide::f64x4::new([self.0[0], self.0[1], self.0[2], self.0[3]])
+            * wide::f64x4::new([1.0, 1.0 / 2.0, 1.0 / 3.0, 1.0 / 4.0]))
+        .to_array();
+        let dst = [0.0, x0[0], x0[1], x0[2], x0[3]];
         Poly4(dst)
     }
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
