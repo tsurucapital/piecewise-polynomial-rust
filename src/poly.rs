@@ -882,17 +882,14 @@ impl Translate for Poly7 {
 impl HasIntegral for Poly7 {
     type IntegralOf = Poly8;
     fn indefinite(&self) -> Self::IntegralOf {
-        let dst = [
-            0.0,
-            self.0[0],
-            self.0[1] / 2.0,
-            self.0[2] / 3.0,
-            self.0[3] / 4.0,
-            self.0[4] / 5.0,
-            self.0[5] / 6.0,
-            self.0[6] / 7.0,
-            self.0[7] / 8.0,
-        ];
+        let x1 = (wide::f64x4::new([self.0[0], self.0[1], self.0[2], self.0[3]])
+            * wide::f64x4::new([1.0, 1.0 / 2.0, 1.0 / 3.0, 1.0 / 4.0]))
+        .to_array();
+        let x2 = (wide::f64x4::new([self.0[4], self.0[5], self.0[6], self.0[7]])
+            * wide::f64x4::new([1.0 / 5.0, 1.0 / 6.0, 1.0 / 7.0, 1.0 / 8.0]))
+        .to_array();
+
+        let dst = [0.0, x1[0], x1[1], x1[2], x1[3], x2[0], x2[1], x2[2], x2[3]];
         Poly8(dst)
     }
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
