@@ -12,6 +12,10 @@ use std::ops::{Add, Mul, MulAssign, Neg, Sub};
 /// by the previous segment if it exists, or for `x` < `end` if this is the
 /// first segment.
 #[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize)]
+#[cfg_attr(
+    feature = "borsh",
+    derive(borsh::BorshDeserialize, borsh::BorshSerialize)
+)]
 pub struct Segment<T> {
     pub end: f64,
     pub poly: T,
@@ -167,6 +171,10 @@ impl<T> Segment<T> {
 /// * there is at least one segment
 /// * for all i: `segments[i].end < segments[i+1].end`
 #[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
+#[cfg_attr(
+    feature = "borsh",
+    derive(borsh::BorshDeserialize, borsh::BorshSerialize)
+)]
 pub struct Piecewise<T> {
     pub segments: Vec<Segment<T>>,
 }

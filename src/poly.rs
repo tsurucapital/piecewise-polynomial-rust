@@ -5,6 +5,10 @@ use std::ops::{Add, Mul, MulAssign, Neg};
 
 /// A join-point between two functions
 #[derive(Debug, PartialEq, Clone, Copy, Arbitrary, Serialize, Deserialize)]
+#[cfg_attr(
+    feature = "borsh",
+    derive(borsh::BorshDeserialize, borsh::BorshSerialize)
+)]
 pub struct Knot {
     pub x: f64,
     pub y: f64,
@@ -91,6 +95,10 @@ impl RelativeEq for PolyN {
 ///
 /// Evaluated using manually unrolled Estin's scheme.
 #[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary, Serialize, Deserialize)]
+#[cfg_attr(
+    feature = "borsh",
+    derive(borsh::BorshDeserialize, borsh::BorshSerialize)
+)]
 pub struct Poly0(pub f64);
 impl Evaluate for Poly0 {
     fn evaluate(&self, _: f64) -> f64 {
@@ -172,6 +180,10 @@ impl RelativeEq for Poly0 {
 ///
 /// Evaluated using manually unrolled Estin's scheme.
 #[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary, Serialize, Deserialize)]
+#[cfg_attr(
+    feature = "borsh",
+    derive(borsh::BorshDeserialize, borsh::BorshSerialize)
+)]
 pub struct Poly1(pub [f64; 2]);
 impl Evaluate for Poly1 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -253,6 +265,10 @@ impl RelativeEq for Poly1 {
 ///
 /// Evaluated using manually unrolled Estin's scheme.
 #[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary, Serialize, Deserialize)]
+#[cfg_attr(
+    feature = "borsh",
+    derive(borsh::BorshDeserialize, borsh::BorshSerialize)
+)]
 pub struct Poly2(pub [f64; 3]);
 impl Evaluate for Poly2 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -341,6 +357,10 @@ impl RelativeEq for Poly2 {
 ///
 /// Evaluated using manually unrolled Estin's scheme.
 #[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary, Serialize, Deserialize)]
+#[cfg_attr(
+    feature = "borsh",
+    derive(borsh::BorshDeserialize, borsh::BorshSerialize)
+)]
 pub struct Poly3(pub [f64; 4]);
 impl Evaluate for Poly3 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -446,6 +466,10 @@ impl RelativeEq for Poly3 {
 ///
 /// Evaluated using manually unrolled Estin's scheme.
 #[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary, Serialize, Deserialize)]
+#[cfg_attr(
+    feature = "borsh",
+    derive(borsh::BorshDeserialize, borsh::BorshSerialize)
+)]
 pub struct Poly4(pub [f64; 5]);
 impl Evaluate for Poly4 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -558,6 +582,10 @@ impl RelativeEq for Poly4 {
 ///
 /// Evaluated using manually unrolled Estin's scheme.
 #[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary, Serialize, Deserialize)]
+#[cfg_attr(
+    feature = "borsh",
+    derive(borsh::BorshDeserialize, borsh::BorshSerialize)
+)]
 pub struct Poly5(pub [f64; 6]);
 impl Evaluate for Poly5 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -680,6 +708,10 @@ impl RelativeEq for Poly5 {
 ///
 /// Evaluated using manually unrolled Estin's scheme.
 #[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary, Serialize, Deserialize)]
+#[cfg_attr(
+    feature = "borsh",
+    derive(borsh::BorshDeserialize, borsh::BorshSerialize)
+)]
 pub struct Poly6(pub [f64; 7]);
 impl Evaluate for Poly6 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -803,6 +835,10 @@ impl RelativeEq for Poly6 {
 ///
 /// Evaluated using manually unrolled Estin's scheme.
 #[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary, Serialize, Deserialize)]
+#[cfg_attr(
+    feature = "borsh",
+    derive(borsh::BorshDeserialize, borsh::BorshSerialize)
+)]
 pub struct Poly7(pub [f64; 8]);
 impl Evaluate for Poly7 {
     fn evaluate(&self, x: f64) -> f64 {
@@ -934,6 +970,10 @@ impl RelativeEq for Poly7 {
 ///
 /// Evaluated using manually unrolled Estin's scheme.
 #[derive(Debug, PartialEq, Clone, Copy, Default, Arbitrary, Serialize, Deserialize)]
+#[cfg_attr(
+    feature = "borsh",
+    derive(borsh::BorshDeserialize, borsh::BorshSerialize)
+)]
 pub struct Poly8(pub [f64; 9]);
 impl Evaluate for Poly8 {
     fn evaluate(&self, x: f64) -> f64 {

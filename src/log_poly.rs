@@ -7,6 +7,10 @@ use std::ops::{Add, Mul, MulAssign, Neg, Sub};
 
 /// Polynomial of natural log of x
 #[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize)]
+#[cfg_attr(
+    feature = "borsh",
+    derive(borsh::BorshDeserialize, borsh::BorshSerialize)
+)]
 pub struct Log<T>(pub T);
 
 impl<Scalar, T: Mul<Scalar>> Mul<Scalar> for Log<T> {
@@ -62,6 +66,10 @@ where
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize)]
+#[cfg_attr(
+    feature = "borsh",
+    derive(borsh::BorshDeserialize, borsh::BorshSerialize)
+)]
 pub struct IntOfLog<T> {
     pub k: f64,
     pub poly: T,
@@ -161,6 +169,10 @@ where
 }
 
 #[derive(Debug, PartialEq, Clone, Copy, Default, Serialize, Deserialize)]
+#[cfg_attr(
+    feature = "borsh",
+    derive(borsh::BorshDeserialize, borsh::BorshSerialize)
+)]
 pub struct IntOfLogPoly4 {
     /// Constant term
     pub k: f64,

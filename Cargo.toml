@@ -13,6 +13,9 @@ repository = "https://github.com/tsurucapital/piecewise-polynomial-rust"
 arbitrary = { version = "1.0.0", features = ["derive"] }
 approx = "0.5.0"
 serde = { version = "1.0.123", features = ["derive"] }
+borsh = { version = "1.2", default-features = false, optional = true, features = [
+    "derive",
+] }
 
 [dev-dependencies]
 assert_approx_eq = "1.1.0"
@@ -32,7 +35,7 @@ harness = false
 
 [profile.release]
 debug = true
-lto = "thin" # full makes no differenc
+lto = "thin"      # full makes no differenc
 codegen-units = 1
 
 [profile.bench]
