@@ -1,5 +1,5 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
-use piecewise_polynomial::{IntOfLogPoly4, Piecewise, PiecewiseEvaluator, Segment};
+use piecewise_polynomial::{Evaluate, IntOfLogPoly4, Piecewise, PiecewiseEvaluator, Segment};
 
 fn evaluator(c: &mut Criterion) {
     let pp = Piecewise {
@@ -614,8 +614,20 @@ fn evaluator(c: &mut Criterion) {
         b.iter_batched_ref(
             || PiecewiseEvaluator::new(&pp),
             |pp| {
-                for x in black_box(&knots).iter() {
-                    pp.evaluate(*x);
+                for x in knots.iter() {
+                    pp.evaluate(black_box(*x));
+                }
+            },
+            criterion::BatchSize::SmallInput,
+        );
+    });
+
+    c.bench_function("evaluate_increasing_order_vanilla", |b| {
+        b.iter_batched_ref(
+            || &pp,
+            |pp| {
+                for x in knots.iter() {
+                    pp.evaluate(black_box(*x));
                 }
             },
             criterion::BatchSize::SmallInput,
@@ -626,8 +638,20 @@ fn evaluator(c: &mut Criterion) {
         b.iter_batched_ref(
             || PiecewiseEvaluator::new(&pp),
             |pp| {
-                for x in black_box(&shuffled_knots).iter() {
-                    pp.evaluate(*x);
+                for x in shuffled_knots.iter() {
+                    pp.evaluate(black_box(*x));
+                }
+            },
+            criterion::BatchSize::SmallInput,
+        );
+    });
+
+    c.bench_function("evaluate_shuffled_order_vanilla", |b| {
+        b.iter_batched_ref(
+            || &pp,
+            |pp| {
+                for x in shuffled_knots.iter() {
+                    pp.evaluate(black_box(*x));
                 }
             },
             criterion::BatchSize::SmallInput,
