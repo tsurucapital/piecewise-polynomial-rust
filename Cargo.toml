@@ -33,6 +33,10 @@ harness = false
 name = "piecewise"
 harness = false
 
+[[bench]]
+name = "piecewise_evaluator"
+harness = false
+
 [profile.release]
 debug = true
 lto = "thin"      # full makes no differenc
