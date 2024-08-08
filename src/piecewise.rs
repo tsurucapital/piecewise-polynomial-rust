@@ -344,21 +344,25 @@ where
 /// This allows us to drastically cut down number of searches for the
 /// segments in repeated evaluations of same piecewise polynomial.
 pub struct PiecewiseEvaluator<'a, T> {
-    poly: &'a Piecewise<T>,
+    all_segments_front: &'a [Segment<T>],
+    tail: &'a [Segment<T>],
+    last: &'a Segment<T>,
     last_evaluation: f64,
-    last_segment: usize,
 }
 
 impl<'a, T: Evaluate> PiecewiseEvaluator<'a, T> {
     /// Creates the evaluator and gives result of initial run. From
     /// there on, you should invoke evaluate method to progress it.
     pub fn new(poly: &'a Piecewise<T>) -> Self {
-        // A bit of copy-paste of Piecewise evaluate...
-        assert!(!poly.segments.is_empty(), "no segments to pick from");
+        let segments = poly.segments.as_slice();
+        let (last, front) = segments.split_last().expect("no segments to pick from");
         PiecewiseEvaluator {
-            poly,
-            last_evaluation: f64::NEG_INFINITY,
-            last_segment: 0,
+            all_segments_front: front,
+            tail: front,
+            last,
+            // Initialise to whatever is in front of the tail as that's the
+            // "current" segment. If there's nothing, we just use the end.
+            last_evaluation: front.first().map(|s| s.end).unwrap_or(last.end),
         }
     }
 
@@ -372,38 +376,79 @@ impl<'a, T: Evaluate> PiecewiseEvaluator<'a, T> {
         // point traversing anything earlier. If the value is lower, a
         // previous segment might have been better suited so we try
         // and find the crossing point segment.
-        let last_segment = if x >= self.last_evaluation {
-            match self.poly.segments[self.last_segment..]
-                .iter()
-                .position(|seg| seg.end > x)
-            {
-                None => self.poly.segments.len() - 1,
-                Some(seg_ix) => self.last_segment + seg_ix,
+        let seg = if x >= self.last_evaluation {
+            // Happy path, we're going forward.
+            loop {
+                let Some((first, tail)) = self.tail.split_first() else {
+                    // Tail is empty, use last segment.
+                    break self.last;
+                };
+
+                // We had something in the tail. Check if it's what we're looking
+                // for.
+                if first.end > x {
+                    // This segment looks good.
+                    break first;
+                }
+
+                // The segment end was at or before our x so we want to skip this
+                // segment and check the next one. Shorten the tail.
+                self.tail = tail;
             }
         } else {
-            // Value is smaller so go backwards and find breaking
-            // point.
-            match self.poly.segments[0..self.last_segment]
+            // Unhappy path, we have to search backwards. A simple thing to do
+            // would be to just reset tail to `all_segments` and run the exact
+            // same loop as in happy path. In practice, even if we're seeing a
+            // decreased value, it is often very close to the existing value:
+            // often the very same segment. We do some extra book-keeping to try
+            // and avoid a lot of the work based on this heuristic. Of course,
+            // if the value was far off, it can be faster to start searching
+            // from beginning...
+            //
+            // First determine the possible range to look in: this is from the
+            // beginning to current segment.
+            //
+            // We know that tail.len() <= all_segments_front.len() so we can
+            // always figure out the bit we are _not_ looking at.
+
+            // The compiler can see that the below is never out of bounds and
+            // removes runtime check.
+            let in_front = &self.all_segments_front[..self
+                .all_segments_front
+                .len()
+                .saturating_sub(self.tail.len())];
+
+            // We now go backwards. If we see a segment with `end <= x`, we
+            // have gone too far and want to use the next segment over.
+            self.tail = in_front
                 .iter()
+                .enumerate()
                 .rev()
-                .position(|seg| seg.end <= x)
-            {
-                // We ran back to the front and all segments were
-                // larger, therefore we use first segment.
-                None => 0,
-                // We found a the last segment (if we look from start)
-                // where `end <= x` holds therefore we know that the
-                // next segment must be `end > x`. Further, we know
-                // that there's at least one more segment: the one we
-                // started at. So the indexing is safe. Remember that
-                // we're going backwards so we have to adjust the
-                // index we find.
-                Some(seg_ix) => self.last_segment - seg_ix,
-            }
+                .find_map(|(ix, seg)| {
+                    if seg.end <= x {
+                        // We found some segment, our new tail starts at the next
+                        // segment over to the right. It might be empty, that's
+                        // fine.
+                        Some(
+                            self.all_segments_front
+                                .split_at_checked(ix + 1)
+                                .map(|(_, tail)| tail)
+                                .unwrap_or(&[]),
+                        )
+                    } else {
+                        None
+                    }
+                })
+                // No segments end was smaller than `x`, we want to use the front segment.
+                .unwrap_or(self.all_segments_front);
+
+            // Tail now has the right segment in front of it. Unless it's empty,
+            // in case we want to use the last segment.
+            self.tail.first().unwrap_or(self.last)
         };
+
         self.last_evaluation = x;
-        self.last_segment = last_segment;
-        self.poly.segments[last_segment].evaluate(x)
+        seg.evaluate(x)
     }
 }
 
@@ -1519,6 +1564,21 @@ mod tests {
             poly.evaluate(poly.segments[1].end - 0.1),
             1128.5314497684099,
             1e-10
+        );
+
+        // Assert exact same results with PiecewiseEvaluator.
+        let mut evaluator = PiecewiseEvaluator::new(&poly);
+        assert_eq!(
+            evaluator.evaluate(poly.segments[1].end),
+            poly.evaluate(poly.segments[1].end)
+        );
+        assert_eq!(
+            evaluator.evaluate(poly.segments[1].end + 0.1),
+            poly.evaluate(poly.segments[1].end + 0.1)
+        );
+        assert_eq!(
+            evaluator.evaluate(poly.segments[1].end - 0.1),
+            poly.evaluate(poly.segments[1].end - 0.1)
         );
     }
 }
