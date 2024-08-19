@@ -351,10 +351,12 @@ pub struct PiecewiseEvaluator<'a, T> {
 }
 
 impl<'a, T: Evaluate> PiecewiseEvaluator<'a, T> {
-    /// Creates the evaluator and gives result of initial run. From
-    /// there on, you should invoke evaluate method to progress it.
-    pub fn new(poly: &'a Piecewise<T>) -> Self {
-        let segments = poly.segments.as_slice();
+    /// Creates the evaluator and gives result of initial run. From there on,
+    /// you should invoke evaluate method to progress it.
+    ///
+    /// Assumes that segments are sorted properly: you won't get undefined
+    /// behaviour if they aren't, but the results might be strange.
+    pub fn new(segments: &'a [Segment<T>]) -> Self {
         let (last, front) = segments.split_last().expect("no segments to pick from");
         PiecewiseEvaluator {
             all_segments_front: front,
@@ -1567,7 +1569,7 @@ mod tests {
         );
 
         // Assert exact same results with PiecewiseEvaluator.
-        let mut evaluator = PiecewiseEvaluator::new(&poly);
+        let mut evaluator = PiecewiseEvaluator::new(&poly.segments);
         assert_eq!(
             evaluator.evaluate(poly.segments[1].end),
             poly.evaluate(poly.segments[1].end)

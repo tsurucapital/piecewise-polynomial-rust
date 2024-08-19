@@ -612,7 +612,7 @@ fn evaluator(c: &mut Criterion) {
 
     c.bench_function("evaluate_increasing_order", |b| {
         b.iter_batched_ref(
-            || PiecewiseEvaluator::new(&pp),
+            || PiecewiseEvaluator::new(&pp.segments),
             |pp| {
                 for x in knots.iter() {
                     pp.evaluate(black_box(*x));
@@ -636,7 +636,7 @@ fn evaluator(c: &mut Criterion) {
 
     c.bench_function("evaluate_shuffled_order", |b| {
         b.iter_batched_ref(
-            || PiecewiseEvaluator::new(&pp),
+            || PiecewiseEvaluator::new(&pp.segments),
             |pp| {
                 for x in shuffled_knots.iter() {
                     pp.evaluate(black_box(*x));
