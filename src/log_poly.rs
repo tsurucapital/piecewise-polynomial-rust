@@ -15,24 +15,28 @@ pub struct Log<T>(pub T);
 
 impl<Scalar, T: Mul<Scalar>> Mul<Scalar> for Log<T> {
     type Output = Log<T::Output>;
+    #[inline]
     fn mul(self, rhs: Scalar) -> Self::Output {
         Log(self.0 * rhs)
     }
 }
 
 impl<T: MulAssign<f64>> MulAssign<f64> for Log<T> {
+    #[inline]
     fn mul_assign(&mut self, rhs: f64) {
         self.0 *= rhs;
     }
 }
 
 impl<T: Evaluate> Evaluate for Log<T> {
+    #[inline]
     fn evaluate(&self, v: f64) -> f64 {
         self.0.evaluate(v.ln())
     }
 }
 
 impl<T: Translate> Translate for Log<T> {
+    #[inline]
     fn translate(&mut self, v: f64) {
         self.0.translate(v);
     }
@@ -43,10 +47,12 @@ where
     T: PartialEq + AbsDiffEq<Epsilon = f64>,
 {
     type Epsilon = f64;
+    #[inline]
     fn default_epsilon() -> Self::Epsilon {
         <Self::Epsilon as AbsDiffEq>::default_epsilon()
     }
 
+    #[inline]
     fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
         self.0.abs_diff_eq(&other.0, eps)
     }
@@ -56,10 +62,12 @@ impl<T> RelativeEq for Log<T>
 where
     T: AbsDiffEq<Epsilon = f64> + RelativeEq,
 {
+    #[inline]
     fn default_max_relative() -> Self::Epsilon {
         <Self::Epsilon as RelativeEq>::default_max_relative()
     }
 
+    #[inline]
     fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
         self.0.relative_eq(&other.0, eps, max_relative)
     }
@@ -76,6 +84,7 @@ pub struct IntOfLog<T> {
 }
 
 impl<T: Default> Default for IntOfLog<T> {
+    #[inline]
     fn default() -> Self {
         IntOfLog {
             k: 0.0,
@@ -86,6 +95,7 @@ impl<T: Default> Default for IntOfLog<T> {
 
 impl<T: Add> Add for IntOfLog<T> {
     type Output = IntOfLog<T::Output>;
+    #[inline]
     fn add(self, other: Self) -> Self::Output {
         IntOfLog {
             k: self.k + other.k,
@@ -103,6 +113,7 @@ where
     T: Mul<Scalar>,
 {
     type Output = IntOfLog<T::Output>;
+    #[inline]
     fn mul(self, rhs: Scalar) -> Self::Output {
         IntOfLog {
             k: rhs * self.k,
@@ -112,6 +123,7 @@ where
 }
 
 impl<T: MulAssign<f64>> MulAssign<f64> for IntOfLog<T> {
+    #[inline]
     fn mul_assign(&mut self, rhs: f64) {
         self.k *= rhs;
         self.poly *= rhs;
@@ -120,6 +132,7 @@ impl<T: MulAssign<f64>> MulAssign<f64> for IntOfLog<T> {
 
 impl<T: Neg> Neg for IntOfLog<T> {
     type Output = IntOfLog<T::Output>;
+    #[inline]
     fn neg(self) -> Self::Output {
         IntOfLog {
             k: self.k.neg(),
@@ -129,12 +142,14 @@ impl<T: Neg> Neg for IntOfLog<T> {
 }
 
 impl<T: Evaluate> Evaluate for IntOfLog<T> {
+    #[inline]
     fn evaluate(&self, v: f64) -> f64 {
         self.k + self.poly.evaluate(v.ln())
     }
 }
 
 impl<T: Translate + Copy> Translate for IntOfLog<T> {
+    #[inline]
     fn translate(&mut self, v: f64) {
         self.k += v;
     }
@@ -145,10 +160,12 @@ where
     T: PartialEq + AbsDiffEq<Epsilon = f64>,
 {
     type Epsilon = f64;
+    #[inline]
     fn default_epsilon() -> Self::Epsilon {
         <Self::Epsilon as AbsDiffEq>::default_epsilon()
     }
 
+    #[inline]
     fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
         self.k.abs_diff_eq(&other.k, eps) && self.poly.abs_diff_eq(&other.poly, eps)
     }
@@ -158,10 +175,12 @@ impl<T> RelativeEq for IntOfLog<T>
 where
     T: AbsDiffEq<Epsilon = f64> + RelativeEq,
 {
+    #[inline]
     fn default_max_relative() -> Self::Epsilon {
         <Self::Epsilon as RelativeEq>::default_max_relative()
     }
 
+    #[inline]
     fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
         self.k.relative_eq(&other.k, eps, max_relative)
             && self.poly.relative_eq(&other.poly, eps, max_relative)
@@ -182,6 +201,7 @@ pub struct IntOfLogPoly4 {
 
 impl Add for IntOfLogPoly4 {
     type Output = Self;
+    #[inline]
     fn add(mut self, other: Self) -> Self::Output {
         self.k += other.k;
         self.coeffs
@@ -195,6 +215,7 @@ impl Add for IntOfLogPoly4 {
 
 impl Add<&IntOfLogPoly4> for &IntOfLogPoly4 {
     type Output = IntOfLogPoly4;
+    #[inline]
     fn add(self, other: &IntOfLogPoly4) -> Self::Output {
         *self + *other
     }
@@ -202,6 +223,7 @@ impl Add<&IntOfLogPoly4> for &IntOfLogPoly4 {
 
 impl Neg for IntOfLogPoly4 {
     type Output = Self;
+    #[inline]
     fn neg(self) -> Self::Output {
         IntOfLogPoly4 {
             k: self.k.neg(),
@@ -218,6 +240,7 @@ impl Neg for IntOfLogPoly4 {
 
 impl Mul<f64> for IntOfLogPoly4 {
     type Output = Self;
+    #[inline]
     fn mul(self, rhs: f64) -> Self::Output {
         IntOfLogPoly4 {
             k: self.k * rhs,
@@ -234,6 +257,7 @@ impl Mul<f64> for IntOfLogPoly4 {
 
 impl Sub for IntOfLogPoly4 {
     type Output = Self;
+    #[inline]
     fn sub(mut self, other: Self) -> Self::Output {
         self.k -= other.k;
         self.coeffs
@@ -247,6 +271,7 @@ impl Sub for IntOfLogPoly4 {
 
 impl Sub<&IntOfLogPoly4> for &IntOfLogPoly4 {
     type Output = IntOfLogPoly4;
+    #[inline]
     fn sub(self, other: &IntOfLogPoly4) -> Self::Output {
         *self - *other
     }
@@ -254,10 +279,12 @@ impl Sub<&IntOfLogPoly4> for &IntOfLogPoly4 {
 
 impl AbsDiffEq for IntOfLogPoly4 {
     type Epsilon = f64;
+    #[inline]
     fn default_epsilon() -> Self::Epsilon {
         <Self::Epsilon as AbsDiffEq>::default_epsilon()
     }
 
+    #[inline]
     fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
         self.k.abs_diff_eq(&other.k, eps)
             && self.coeffs.abs_diff_eq(&other.coeffs, eps)
@@ -266,10 +293,12 @@ impl AbsDiffEq for IntOfLogPoly4 {
 }
 
 impl RelativeEq for IntOfLogPoly4 {
+    #[inline]
     fn default_max_relative() -> Self::Epsilon {
         <Self::Epsilon as RelativeEq>::default_max_relative()
     }
 
+    #[inline]
     fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
         self.k.relative_eq(&other.k, eps, max_relative)
             && self.coeffs.relative_eq(&other.coeffs, eps, max_relative)
@@ -279,6 +308,7 @@ impl RelativeEq for IntOfLogPoly4 {
 
 // Hide ugly taylor expansion stuff
 mod taylor {
+    #[inline]
     fn exp_5_tail_anal(x: f64) -> f64 {
         let x = x.recip();
 
@@ -299,6 +329,7 @@ mod taylor {
         t2.mul_add(x4, t1.mul_add(x2, t0))
     }
 
+    #[inline]
     fn exp_5_tail_taylor(x: f64) -> f64 {
         // (((C0+C1x) + (C2+C3x)x2) + ((C4+C5x) + (C6+C7x)x2)x4) + (((C8+C9x) + (C10+C11x)x2) + ((C12+C13x) + (C14+C15x)x2)x4)x8
         let c0: f64 = 1.0 / 120.0;
@@ -363,6 +394,7 @@ mod taylor {
         bot.mul_add(x8, top)
     }
 
+    #[inline]
     pub fn exp_5_taylor(x: f64) -> f64 {
         const LOWER_THRES: f64 = -1.71;
         const UPPER_THRES: f64 = 1.72;
@@ -397,6 +429,7 @@ mod taylor {
 }
 
 impl Evaluate for IntOfLogPoly4 {
+    #[inline]
     fn evaluate(&self, v: f64) -> f64 {
         let x = v.ln().neg();
 
@@ -423,6 +456,7 @@ impl Evaluate for IntOfLogPoly4 {
 }
 
 impl Translate for IntOfLogPoly4 {
+    #[inline]
     fn translate(&mut self, v: f64) {
         self.k += v;
     }
@@ -430,6 +464,7 @@ impl Translate for IntOfLogPoly4 {
 
 impl HasIntegral for Log<Poly0> {
     type IntegralOf = IntOfLog<Poly0>;
+    #[inline]
     fn indefinite(&self) -> Self::IntegralOf {
         IntOfLog {
             k: 0.0,
@@ -437,6 +472,7 @@ impl HasIntegral for Log<Poly0> {
         }
     }
 
+    #[inline]
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let mut indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x));
@@ -446,6 +482,7 @@ impl HasIntegral for Log<Poly0> {
 
 impl HasIntegral for Log<Poly1> {
     type IntegralOf = IntOfLog<Poly1>;
+    #[inline]
     fn indefinite(&self) -> Self::IntegralOf {
         let b = (self.0).0[1];
         let a = (self.0).0[0] - b;
@@ -455,6 +492,7 @@ impl HasIntegral for Log<Poly1> {
         }
     }
 
+    #[inline]
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let mut indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x));
@@ -464,6 +502,7 @@ impl HasIntegral for Log<Poly1> {
 
 impl HasIntegral for Log<Poly2> {
     type IntegralOf = IntOfLog<Poly2>;
+    #[inline]
     fn indefinite(&self) -> Self::IntegralOf {
         let c = (self.0).0[2];
         let b = (self.0).0[1] - 2.0 * c;
@@ -474,6 +513,7 @@ impl HasIntegral for Log<Poly2> {
         }
     }
 
+    #[inline]
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let mut indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x));
@@ -483,6 +523,7 @@ impl HasIntegral for Log<Poly2> {
 
 impl HasIntegral for Log<Poly3> {
     type IntegralOf = IntOfLog<Poly3>;
+    #[inline]
     fn indefinite(&self) -> Self::IntegralOf {
         let d = (self.0).0[3];
         let c = (self.0).0[2] - 3.0 * d;
@@ -494,6 +535,7 @@ impl HasIntegral for Log<Poly3> {
         }
     }
 
+    #[inline]
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let mut indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x));
@@ -504,6 +546,7 @@ impl HasIntegral for Log<Poly3> {
 // NB: special case
 impl HasIntegral for Log<Poly4> {
     type IntegralOf = IntOfLogPoly4;
+    #[inline]
     fn indefinite(&self) -> Self::IntegralOf {
         let a = (self.0).0[0].neg();
         let b = (a + (self.0).0[1]) * (1.0 / 2.0);
@@ -517,6 +560,7 @@ impl HasIntegral for Log<Poly4> {
         }
     }
 
+    #[inline]
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let mut indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x));
@@ -526,6 +570,7 @@ impl HasIntegral for Log<Poly4> {
 
 impl HasIntegral for Log<Poly5> {
     type IntegralOf = IntOfLog<Poly5>;
+    #[inline]
     fn indefinite(&self) -> Self::IntegralOf {
         let f = (self.0).0[5];
         let e = (self.0).0[4] - 5.0 * f;
@@ -539,6 +584,7 @@ impl HasIntegral for Log<Poly5> {
         }
     }
 
+    #[inline]
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let mut indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x));
@@ -548,6 +594,7 @@ impl HasIntegral for Log<Poly5> {
 
 impl HasIntegral for Log<Poly6> {
     type IntegralOf = IntOfLog<Poly6>;
+    #[inline]
     fn indefinite(&self) -> Self::IntegralOf {
         let g = (self.0).0[6];
         let f = (self.0).0[5] - 6.0 * g;
@@ -562,6 +609,7 @@ impl HasIntegral for Log<Poly6> {
         }
     }
 
+    #[inline]
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let mut indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x));
@@ -571,6 +619,7 @@ impl HasIntegral for Log<Poly6> {
 
 impl HasIntegral for Log<Poly7> {
     type IntegralOf = IntOfLog<Poly7>;
+    #[inline]
     fn indefinite(&self) -> Self::IntegralOf {
         let h = (self.0).0[7];
         let g = (self.0).0[6] - 7.0 * h;
@@ -586,6 +635,7 @@ impl HasIntegral for Log<Poly7> {
         }
     }
 
+    #[inline]
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let mut indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x));
@@ -595,6 +645,7 @@ impl HasIntegral for Log<Poly7> {
 
 impl HasIntegral for Log<Poly8> {
     type IntegralOf = IntOfLog<Poly8>;
+    #[inline]
     fn indefinite(&self) -> Self::IntegralOf {
         let i = (self.0).0[8];
         let h = (self.0).0[7] - 8.0 * i;
@@ -611,6 +662,7 @@ impl HasIntegral for Log<Poly8> {
         }
     }
 
+    #[inline]
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let mut indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x));

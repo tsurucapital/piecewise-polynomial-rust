@@ -53,6 +53,7 @@ pub trait Translate {
 #[derive(Debug, PartialEq, Clone, Arbitrary)]
 pub struct PolyN(pub Vec<f64>);
 impl Evaluate for PolyN {
+    #[inline]
     fn evaluate(&self, x: f64) -> f64 {
         let mut iter = self.0.iter().rev();
         match iter.next() {
@@ -62,6 +63,7 @@ impl Evaluate for PolyN {
     }
 }
 impl Translate for PolyN {
+    #[inline]
     fn translate(&mut self, v: f64) {
         match self.0.get_mut(0) {
             None => self.0.push(v),
@@ -72,20 +74,24 @@ impl Translate for PolyN {
 
 impl AbsDiffEq for PolyN {
     type Epsilon = f64;
+    #[inline]
     fn default_epsilon() -> Self::Epsilon {
         <Self::Epsilon as AbsDiffEq>::default_epsilon()
     }
 
+    #[inline]
     fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
         self.0.abs_diff_eq(&other.0, eps)
     }
 }
 
 impl RelativeEq for PolyN {
+    #[inline]
     fn default_max_relative() -> Self::Epsilon {
         <Self::Epsilon as RelativeEq>::default_max_relative()
     }
 
+    #[inline]
     fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
         self.0.relative_eq(&other.0, eps, max_relative)
     }
@@ -101,27 +107,32 @@ impl RelativeEq for PolyN {
 )]
 pub struct Poly0(pub f64);
 impl Evaluate for Poly0 {
+    #[inline]
     fn evaluate(&self, _: f64) -> f64 {
         self.0
     }
 }
 impl HasDerivative for Poly0 {
     type DerivativeOf = Poly0;
+    #[inline]
     fn derivative(&self) -> Self::DerivativeOf {
         Poly0(0.0)
     }
 }
 impl Translate for Poly0 {
+    #[inline]
     fn translate(&mut self, v: f64) {
         self.0 += v
     }
 }
 impl HasIntegral for Poly0 {
     type IntegralOf = Poly1;
+    #[inline]
     fn indefinite(&self) -> Self::IntegralOf {
         let dst = [0.0, self.0];
         Poly1(dst)
     }
+    #[inline]
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let mut indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x));
@@ -131,12 +142,14 @@ impl HasIntegral for Poly0 {
 
 impl Mul<f64> for Poly0 {
     type Output = Self;
+    #[inline]
     fn mul(self, rhs: f64) -> Self {
         Poly0(self.0 * rhs)
     }
 }
 
 impl MulAssign<f64> for Poly0 {
+    #[inline]
     fn mul_assign(&mut self, rhs: f64) {
         self.0 *= rhs;
     }
@@ -144,12 +157,14 @@ impl MulAssign<f64> for Poly0 {
 
 impl Neg for Poly0 {
     type Output = Self;
+    #[inline]
     fn neg(self) -> Self {
         self * -1.0
     }
 }
 impl Add for Poly0 {
     type Output = Self;
+    #[inline]
     fn add(self, other: Self) -> Self {
         Poly0(self.0 + other.0)
     }
@@ -157,20 +172,24 @@ impl Add for Poly0 {
 
 impl AbsDiffEq for Poly0 {
     type Epsilon = f64;
+    #[inline]
     fn default_epsilon() -> Self::Epsilon {
         <Self::Epsilon as AbsDiffEq>::default_epsilon()
     }
 
+    #[inline]
     fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
         self.0.abs_diff_eq(&other.0, eps)
     }
 }
 
 impl RelativeEq for Poly0 {
+    #[inline]
     fn default_max_relative() -> Self::Epsilon {
         <Self::Epsilon as RelativeEq>::default_max_relative()
     }
 
+    #[inline]
     fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
         self.0.relative_eq(&other.0, eps, max_relative)
     }
@@ -186,6 +205,7 @@ impl RelativeEq for Poly0 {
 )]
 pub struct Poly1(pub [f64; 2]);
 impl Evaluate for Poly1 {
+    #[inline]
     fn evaluate(&self, x: f64) -> f64 {
         let c = self.0;
         c[1].mul_add(x, c[0])
@@ -193,21 +213,25 @@ impl Evaluate for Poly1 {
 }
 impl HasDerivative for Poly1 {
     type DerivativeOf = Poly0;
+    #[inline]
     fn derivative(&self) -> Self::DerivativeOf {
         Poly0(self.0[1])
     }
 }
 impl Translate for Poly1 {
+    #[inline]
     fn translate(&mut self, v: f64) {
         self.0[0] += v;
     }
 }
 impl HasIntegral for Poly1 {
     type IntegralOf = Poly2;
+    #[inline]
     fn indefinite(&self) -> Self::IntegralOf {
         let dst = [0.0, self.0[0], self.0[1] / 2.0];
         Poly2(dst)
     }
+    #[inline]
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let mut indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x));
@@ -216,12 +240,14 @@ impl HasIntegral for Poly1 {
 }
 impl Mul<f64> for Poly1 {
     type Output = Self;
+    #[inline]
     fn mul(self, rhs: f64) -> Self {
         Poly1([self.0[0] * rhs, self.0[1] * rhs])
     }
 }
 
 impl MulAssign<f64> for Poly1 {
+    #[inline]
     fn mul_assign(&mut self, rhs: f64) {
         self.0.iter_mut().for_each(|x| *x *= rhs);
     }
@@ -229,12 +255,14 @@ impl MulAssign<f64> for Poly1 {
 
 impl Neg for Poly1 {
     type Output = Self;
+    #[inline]
     fn neg(self) -> Self {
         self * -1.0
     }
 }
 impl Add for Poly1 {
     type Output = Self;
+    #[inline]
     fn add(self, other: Self) -> Self {
         Poly1([self.0[0] + other.0[0], self.0[1] + other.0[1]])
     }
@@ -242,20 +270,24 @@ impl Add for Poly1 {
 
 impl AbsDiffEq for Poly1 {
     type Epsilon = f64;
+    #[inline]
     fn default_epsilon() -> Self::Epsilon {
         <Self::Epsilon as AbsDiffEq>::default_epsilon()
     }
 
+    #[inline]
     fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
         self.0.abs_diff_eq(&other.0, eps)
     }
 }
 
 impl RelativeEq for Poly1 {
+    #[inline]
     fn default_max_relative() -> Self::Epsilon {
         <Self::Epsilon as RelativeEq>::default_max_relative()
     }
 
+    #[inline]
     fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
         self.0.relative_eq(&other.0, eps, max_relative)
     }
@@ -271,6 +303,7 @@ impl RelativeEq for Poly1 {
 )]
 pub struct Poly2(pub [f64; 3]);
 impl Evaluate for Poly2 {
+    #[inline]
     fn evaluate(&self, x: f64) -> f64 {
         let x2 = x * x;
         let c = self.0;
@@ -279,6 +312,7 @@ impl Evaluate for Poly2 {
 }
 impl HasDerivative for Poly2 {
     type DerivativeOf = Poly1;
+    #[inline]
     fn derivative(&self) -> Self::DerivativeOf {
         let coeffs = self.0;
         let dst = [coeffs[1], 2.0 * coeffs[2]];
@@ -286,16 +320,19 @@ impl HasDerivative for Poly2 {
     }
 }
 impl Translate for Poly2 {
+    #[inline]
     fn translate(&mut self, v: f64) {
         self.0[0] += v;
     }
 }
 impl HasIntegral for Poly2 {
     type IntegralOf = Poly3;
+    #[inline]
     fn indefinite(&self) -> Self::IntegralOf {
         let dst = [0.0, self.0[0], self.0[1] / 2.0, self.0[2] / 3.0];
         Poly3(dst)
     }
+    #[inline]
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let mut indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x));
@@ -304,12 +341,14 @@ impl HasIntegral for Poly2 {
 }
 impl Mul<f64> for Poly2 {
     type Output = Self;
+    #[inline]
     fn mul(self, rhs: f64) -> Self {
         Poly2([self.0[0] * rhs, self.0[1] * rhs, self.0[2] * rhs])
     }
 }
 
 impl MulAssign<f64> for Poly2 {
+    #[inline]
     fn mul_assign(&mut self, rhs: f64) {
         self.0.iter_mut().for_each(|x| *x *= rhs);
     }
@@ -317,12 +356,14 @@ impl MulAssign<f64> for Poly2 {
 
 impl Neg for Poly2 {
     type Output = Self;
+    #[inline]
     fn neg(self) -> Self {
         self * -1.0
     }
 }
 impl Add for Poly2 {
     type Output = Self;
+    #[inline]
     fn add(self, other: Self) -> Self {
         Poly2([
             self.0[0] + other.0[0],
@@ -334,20 +375,24 @@ impl Add for Poly2 {
 
 impl AbsDiffEq for Poly2 {
     type Epsilon = f64;
+    #[inline]
     fn default_epsilon() -> Self::Epsilon {
         <Self::Epsilon as AbsDiffEq>::default_epsilon()
     }
 
+    #[inline]
     fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
         self.0.abs_diff_eq(&other.0, eps)
     }
 }
 
 impl RelativeEq for Poly2 {
+    #[inline]
     fn default_max_relative() -> Self::Epsilon {
         <Self::Epsilon as RelativeEq>::default_max_relative()
     }
 
+    #[inline]
     fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
         self.0.relative_eq(&other.0, eps, max_relative)
     }
@@ -363,6 +408,7 @@ impl RelativeEq for Poly2 {
 )]
 pub struct Poly3(pub [f64; 4]);
 impl Evaluate for Poly3 {
+    #[inline]
     fn evaluate(&self, x: f64) -> f64 {
         // P3(x) = (C0 + C1x) + (C2 + C3x) x2
         let x2 = x * x;
@@ -376,6 +422,7 @@ impl Evaluate for Poly3 {
 }
 impl HasDerivative for Poly3 {
     type DerivativeOf = Poly2;
+    #[inline]
     fn derivative(&self) -> Self::DerivativeOf {
         let coeffs = self.0;
         let dst = [coeffs[1], 2.0 * coeffs[2], 3.0 * coeffs[3]];
@@ -383,12 +430,14 @@ impl HasDerivative for Poly3 {
     }
 }
 impl Translate for Poly3 {
+    #[inline]
     fn translate(&mut self, v: f64) {
         self.0[0] += v;
     }
 }
 impl HasIntegral for Poly3 {
     type IntegralOf = Poly4;
+    #[inline]
     fn indefinite(&self) -> Self::IntegralOf {
         let dst = [
             0.0,
@@ -399,6 +448,7 @@ impl HasIntegral for Poly3 {
         ];
         Poly4(dst)
     }
+    #[inline]
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let mut indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x));
@@ -407,6 +457,7 @@ impl HasIntegral for Poly3 {
 }
 impl Mul<f64> for Poly3 {
     type Output = Self;
+    #[inline]
     fn mul(self, rhs: f64) -> Self {
         Poly3([
             self.0[0] * rhs,
@@ -418,6 +469,7 @@ impl Mul<f64> for Poly3 {
 }
 
 impl MulAssign<f64> for Poly3 {
+    #[inline]
     fn mul_assign(&mut self, rhs: f64) {
         self.0.iter_mut().for_each(|x| *x *= rhs);
     }
@@ -425,12 +477,14 @@ impl MulAssign<f64> for Poly3 {
 
 impl Neg for Poly3 {
     type Output = Self;
+    #[inline]
     fn neg(self) -> Self {
         self * -1.0
     }
 }
 impl Add for Poly3 {
     type Output = Self;
+    #[inline]
     fn add(self, other: Self) -> Self {
         Poly3([
             self.0[0] + other.0[0],
@@ -443,20 +497,24 @@ impl Add for Poly3 {
 
 impl AbsDiffEq for Poly3 {
     type Epsilon = f64;
+    #[inline]
     fn default_epsilon() -> Self::Epsilon {
         <Self::Epsilon as AbsDiffEq>::default_epsilon()
     }
 
+    #[inline]
     fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
         self.0.abs_diff_eq(&other.0, eps)
     }
 }
 
 impl RelativeEq for Poly3 {
+    #[inline]
     fn default_max_relative() -> Self::Epsilon {
         <Self::Epsilon as RelativeEq>::default_max_relative()
     }
 
+    #[inline]
     fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
         self.0.relative_eq(&other.0, eps, max_relative)
     }
@@ -472,6 +530,7 @@ impl RelativeEq for Poly3 {
 )]
 pub struct Poly4(pub [f64; 5]);
 impl Evaluate for Poly4 {
+    #[inline]
     fn evaluate(&self, x: f64) -> f64 {
         // P4(x) = (C0 + C1x) + (C2 + C3x) x2 + C4x4
         let c = self.0;
@@ -489,6 +548,7 @@ impl Evaluate for Poly4 {
 }
 impl HasDerivative for Poly4 {
     type DerivativeOf = Poly3;
+    #[inline]
     fn derivative(&self) -> Self::DerivativeOf {
         let coeffs = self.0;
         let dst = [coeffs[1], 2.0 * coeffs[2], 3.0 * coeffs[3], 4.0 * coeffs[4]];
@@ -496,12 +556,14 @@ impl HasDerivative for Poly4 {
     }
 }
 impl Translate for Poly4 {
+    #[inline]
     fn translate(&mut self, v: f64) {
         self.0[0] += v;
     }
 }
 impl HasIntegral for Poly4 {
     type IntegralOf = Poly5;
+    #[inline]
     fn indefinite(&self) -> Self::IntegralOf {
         let dst = [
             0.0,
@@ -513,6 +575,7 @@ impl HasIntegral for Poly4 {
         ];
         Poly5(dst)
     }
+    #[inline]
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let mut indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x));
@@ -521,6 +584,7 @@ impl HasIntegral for Poly4 {
 }
 impl Mul<f64> for Poly4 {
     type Output = Self;
+    #[inline]
     fn mul(self, rhs: f64) -> Self {
         Poly4([
             self.0[0] * rhs,
@@ -533,6 +597,7 @@ impl Mul<f64> for Poly4 {
 }
 
 impl MulAssign<f64> for Poly4 {
+    #[inline]
     fn mul_assign(&mut self, rhs: f64) {
         self.0.iter_mut().for_each(|x| *x *= rhs);
     }
@@ -540,12 +605,14 @@ impl MulAssign<f64> for Poly4 {
 
 impl Neg for Poly4 {
     type Output = Self;
+    #[inline]
     fn neg(self) -> Self {
         self * -1.0
     }
 }
 impl Add for Poly4 {
     type Output = Self;
+    #[inline]
     fn add(self, other: Self) -> Self {
         Poly4([
             self.0[0] + other.0[0],
@@ -559,20 +626,24 @@ impl Add for Poly4 {
 
 impl AbsDiffEq for Poly4 {
     type Epsilon = f64;
+    #[inline]
     fn default_epsilon() -> Self::Epsilon {
         <Self::Epsilon as AbsDiffEq>::default_epsilon()
     }
 
+    #[inline]
     fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
         self.0.abs_diff_eq(&other.0, eps)
     }
 }
 
 impl RelativeEq for Poly4 {
+    #[inline]
     fn default_max_relative() -> Self::Epsilon {
         <Self::Epsilon as RelativeEq>::default_max_relative()
     }
 
+    #[inline]
     fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
         self.0.relative_eq(&other.0, eps, max_relative)
     }
@@ -588,6 +659,7 @@ impl RelativeEq for Poly4 {
 )]
 pub struct Poly5(pub [f64; 6]);
 impl Evaluate for Poly5 {
+    #[inline]
     fn evaluate(&self, x: f64) -> f64 {
         // P5(x) = (C0 + C1x) + (C2 + C3x) x2 + (C4 + C5x) x4
         let c = self.0;
@@ -606,6 +678,7 @@ impl Evaluate for Poly5 {
 
 impl HasDerivative for Poly5 {
     type DerivativeOf = Poly4;
+    #[inline]
     fn derivative(&self) -> Self::DerivativeOf {
         let coeffs = self.0;
         let dst = [
@@ -619,12 +692,14 @@ impl HasDerivative for Poly5 {
     }
 }
 impl Translate for Poly5 {
+    #[inline]
     fn translate(&mut self, v: f64) {
         self.0[0] += v;
     }
 }
 impl HasIntegral for Poly5 {
     type IntegralOf = Poly6;
+    #[inline]
     fn indefinite(&self) -> Self::IntegralOf {
         let dst = [
             0.0,
@@ -637,6 +712,7 @@ impl HasIntegral for Poly5 {
         ];
         Poly6(dst)
     }
+    #[inline]
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let mut indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x));
@@ -645,6 +721,7 @@ impl HasIntegral for Poly5 {
 }
 impl Mul<f64> for Poly5 {
     type Output = Self;
+    #[inline]
     fn mul(self, rhs: f64) -> Self {
         Poly5([
             self.0[0] * rhs,
@@ -658,6 +735,7 @@ impl Mul<f64> for Poly5 {
 }
 
 impl MulAssign<f64> for Poly5 {
+    #[inline]
     fn mul_assign(&mut self, rhs: f64) {
         self.0.iter_mut().for_each(|x| *x *= rhs);
     }
@@ -665,12 +743,14 @@ impl MulAssign<f64> for Poly5 {
 
 impl Neg for Poly5 {
     type Output = Self;
+    #[inline]
     fn neg(self) -> Self {
         self * -1.0
     }
 }
 impl Add for Poly5 {
     type Output = Self;
+    #[inline]
     fn add(self, other: Self) -> Self {
         Poly5([
             self.0[0] + other.0[0],
@@ -685,20 +765,24 @@ impl Add for Poly5 {
 
 impl AbsDiffEq for Poly5 {
     type Epsilon = f64;
+    #[inline]
     fn default_epsilon() -> Self::Epsilon {
         <Self::Epsilon as AbsDiffEq>::default_epsilon()
     }
 
+    #[inline]
     fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
         self.0.abs_diff_eq(&other.0, eps)
     }
 }
 
 impl RelativeEq for Poly5 {
+    #[inline]
     fn default_max_relative() -> Self::Epsilon {
         <Self::Epsilon as RelativeEq>::default_max_relative()
     }
 
+    #[inline]
     fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
         self.0.relative_eq(&other.0, eps, max_relative)
     }
@@ -714,6 +798,7 @@ impl RelativeEq for Poly5 {
 )]
 pub struct Poly6(pub [f64; 7]);
 impl Evaluate for Poly6 {
+    #[inline]
     fn evaluate(&self, x: f64) -> f64 {
         // P6(x) = (C0 + C1x) + (C2 + C3x) x2 + ((C4 + C5x) + C6x2)x4
         let x2 = x * x;
@@ -729,6 +814,7 @@ impl Evaluate for Poly6 {
 }
 impl HasDerivative for Poly6 {
     type DerivativeOf = Poly5;
+    #[inline]
     fn derivative(&self) -> Self::DerivativeOf {
         let coeffs = self.0;
         let dst = [
@@ -743,12 +829,14 @@ impl HasDerivative for Poly6 {
     }
 }
 impl Translate for Poly6 {
+    #[inline]
     fn translate(&mut self, v: f64) {
         self.0[0] += v;
     }
 }
 impl HasIntegral for Poly6 {
     type IntegralOf = Poly7;
+    #[inline]
     fn indefinite(&self) -> Self::IntegralOf {
         let dst = [
             0.0,
@@ -762,6 +850,7 @@ impl HasIntegral for Poly6 {
         ];
         Poly7(dst)
     }
+    #[inline]
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let mut indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x));
@@ -770,6 +859,7 @@ impl HasIntegral for Poly6 {
 }
 impl Mul<f64> for Poly6 {
     type Output = Self;
+    #[inline]
     fn mul(self, rhs: f64) -> Self {
         Poly6([
             self.0[0] * rhs,
@@ -784,6 +874,7 @@ impl Mul<f64> for Poly6 {
 }
 
 impl MulAssign<f64> for Poly6 {
+    #[inline]
     fn mul_assign(&mut self, rhs: f64) {
         self.0.iter_mut().for_each(|x| *x *= rhs);
     }
@@ -791,12 +882,14 @@ impl MulAssign<f64> for Poly6 {
 
 impl Neg for Poly6 {
     type Output = Self;
+    #[inline]
     fn neg(self) -> Self {
         self * -1.0
     }
 }
 impl Add for Poly6 {
     type Output = Self;
+    #[inline]
     fn add(self, other: Self) -> Self {
         Poly6([
             self.0[0] + other.0[0],
@@ -812,20 +905,24 @@ impl Add for Poly6 {
 
 impl AbsDiffEq for Poly6 {
     type Epsilon = f64;
+    #[inline]
     fn default_epsilon() -> Self::Epsilon {
         <Self::Epsilon as AbsDiffEq>::default_epsilon()
     }
 
+    #[inline]
     fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
         self.0.abs_diff_eq(&other.0, eps)
     }
 }
 
 impl RelativeEq for Poly6 {
+    #[inline]
     fn default_max_relative() -> Self::Epsilon {
         <Self::Epsilon as RelativeEq>::default_max_relative()
     }
 
+    #[inline]
     fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
         self.0.relative_eq(&other.0, eps, max_relative)
     }
@@ -841,6 +938,7 @@ impl RelativeEq for Poly6 {
 )]
 pub struct Poly7(pub [f64; 8]);
 impl Evaluate for Poly7 {
+    #[inline]
     fn evaluate(&self, x: f64) -> f64 {
         // P7(x) = (C0 + C1x) + (C2 + C3x) x2 + ((C4 + C5x) + (C6 + C7x) x2)x4
         let c = self.0;
@@ -860,6 +958,7 @@ impl Evaluate for Poly7 {
 }
 impl HasDerivative for Poly7 {
     type DerivativeOf = Poly6;
+    #[inline]
     fn derivative(&self) -> Self::DerivativeOf {
         let coeffs = self.0;
         let dst = [
@@ -875,12 +974,14 @@ impl HasDerivative for Poly7 {
     }
 }
 impl Translate for Poly7 {
+    #[inline]
     fn translate(&mut self, v: f64) {
         self.0[0] += v;
     }
 }
 impl HasIntegral for Poly7 {
     type IntegralOf = Poly8;
+    #[inline]
     fn indefinite(&self) -> Self::IntegralOf {
         let dst = [
             0.0,
@@ -903,6 +1004,7 @@ impl HasIntegral for Poly7 {
 }
 impl Mul<f64> for Poly7 {
     type Output = Self;
+    #[inline]
     fn mul(self, rhs: f64) -> Self {
         Poly7([
             self.0[0] * rhs,
@@ -918,6 +1020,7 @@ impl Mul<f64> for Poly7 {
 }
 
 impl MulAssign<f64> for Poly7 {
+    #[inline]
     fn mul_assign(&mut self, rhs: f64) {
         self.0.iter_mut().for_each(|x| *x *= rhs);
     }
@@ -925,12 +1028,14 @@ impl MulAssign<f64> for Poly7 {
 
 impl Neg for Poly7 {
     type Output = Self;
+    #[inline]
     fn neg(self) -> Self {
         self * -1.0
     }
 }
 impl Add for Poly7 {
     type Output = Self;
+    #[inline]
     fn add(self, other: Self) -> Self {
         Poly7([
             self.0[0] + other.0[0],
@@ -947,20 +1052,24 @@ impl Add for Poly7 {
 
 impl AbsDiffEq for Poly7 {
     type Epsilon = f64;
+    #[inline]
     fn default_epsilon() -> Self::Epsilon {
         <Self::Epsilon as AbsDiffEq>::default_epsilon()
     }
 
+    #[inline]
     fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
         self.0.abs_diff_eq(&other.0, eps)
     }
 }
 
 impl RelativeEq for Poly7 {
+    #[inline]
     fn default_max_relative() -> Self::Epsilon {
         <Self::Epsilon as RelativeEq>::default_max_relative()
     }
 
+    #[inline]
     fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
         self.0.relative_eq(&other.0, eps, max_relative)
     }
@@ -976,6 +1085,7 @@ impl RelativeEq for Poly7 {
 )]
 pub struct Poly8(pub [f64; 9]);
 impl Evaluate for Poly8 {
+    #[inline]
     fn evaluate(&self, x: f64) -> f64 {
         // P8(x) = (C0 + C1x) + (C2 + C3x) x2 + ((C4 + C5x) + (C6 + C7x) x2)x4 + C8x8
         let c = self.0;
@@ -1002,6 +1112,7 @@ impl Evaluate for Poly8 {
 
 impl HasDerivative for Poly8 {
     type DerivativeOf = Poly7;
+    #[inline]
     fn derivative(&self) -> Self::DerivativeOf {
         let coeffs = self.0;
         let dst = [
@@ -1018,12 +1129,14 @@ impl HasDerivative for Poly8 {
     }
 }
 impl Translate for Poly8 {
+    #[inline]
     fn translate(&mut self, v: f64) {
         self.0[0] += v;
     }
 }
 impl Mul<f64> for Poly8 {
     type Output = Self;
+    #[inline]
     fn mul(self, rhs: f64) -> Self {
         Poly8([
             self.0[0] * rhs,
@@ -1040,6 +1153,7 @@ impl Mul<f64> for Poly8 {
 }
 
 impl MulAssign<f64> for Poly8 {
+    #[inline]
     fn mul_assign(&mut self, rhs: f64) {
         self.0.iter_mut().for_each(|x| *x *= rhs);
     }
@@ -1047,12 +1161,14 @@ impl MulAssign<f64> for Poly8 {
 
 impl Neg for Poly8 {
     type Output = Self;
+    #[inline]
     fn neg(self) -> Self {
         self * -1.0
     }
 }
 impl Add for Poly8 {
     type Output = Self;
+    #[inline]
     fn add(self, other: Self) -> Self {
         Poly8([
             self.0[0] + other.0[0],
@@ -1070,20 +1186,24 @@ impl Add for Poly8 {
 
 impl AbsDiffEq for Poly8 {
     type Epsilon = f64;
+    #[inline]
     fn default_epsilon() -> Self::Epsilon {
         <Self::Epsilon as AbsDiffEq>::default_epsilon()
     }
 
+    #[inline]
     fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
         self.0.abs_diff_eq(&other.0, eps)
     }
 }
 
 impl RelativeEq for Poly8 {
+    #[inline]
     fn default_max_relative() -> Self::Epsilon {
         <Self::Epsilon as RelativeEq>::default_max_relative()
     }
 
+    #[inline]
     fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
         self.0.relative_eq(&other.0, eps, max_relative)
     }

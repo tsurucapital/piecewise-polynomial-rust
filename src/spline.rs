@@ -6,6 +6,7 @@ use std::iter;
 ///
 /// Taken from “Constrained Cubic Spline Interpolation for Chemical
 /// Engineering Applications” by CJC Kruger.
+#[inline]
 pub fn constrained_spline(ks0n: &[Knot]) -> Piecewise<Poly3> {
     assert!(ks0n.len() >= 3, "need at least 3 knots");
 

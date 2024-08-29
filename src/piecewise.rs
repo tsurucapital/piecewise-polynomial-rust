@@ -22,6 +22,7 @@ pub struct Segment<T> {
 }
 
 impl<T: Evaluate> Evaluate for Segment<T> {
+    #[inline]
     fn evaluate(&self, v: f64) -> f64 {
         self.poly.evaluate(v)
     }
@@ -32,6 +33,7 @@ where
     T: Mul<f64, Output = T> + Copy,
 {
     type Output = Self;
+    #[inline]
     fn mul(self, rhs: f64) -> Self::Output {
         Segment {
             end: self.end,
@@ -41,12 +43,14 @@ where
 }
 
 impl<T: MulAssign<f64>> MulAssign<f64> for Segment<T> {
+    #[inline]
     fn mul_assign(&mut self, rhs: f64) {
         self.poly *= rhs
     }
 }
 
 impl<T: MulAssign<f64>> MulAssign<f64> for &mut Segment<T> {
+    #[inline]
     fn mul_assign(&mut self, rhs: f64) {
         self.poly *= rhs
     }
@@ -54,6 +58,7 @@ impl<T: MulAssign<f64>> MulAssign<f64> for &mut Segment<T> {
 
 impl<T: HasDerivative> HasDerivative for Segment<T> {
     type DerivativeOf = Segment<T::DerivativeOf>;
+    #[inline]
     fn derivative(&self) -> Self::DerivativeOf {
         Segment {
             end: self.end,
@@ -63,6 +68,7 @@ impl<T: HasDerivative> HasDerivative for Segment<T> {
 }
 
 impl<T: Translate> Translate for Segment<T> {
+    #[inline]
     fn translate(&mut self, v: f64) {
         self.poly.translate(v);
     }
@@ -74,12 +80,14 @@ where
     T::IntegralOf: Translate,
 {
     type IntegralOf = Segment<T::IntegralOf>;
+    #[inline]
     fn indefinite(&self) -> Self::IntegralOf {
         Segment {
             end: self.end,
             poly: self.poly.indefinite(),
         }
     }
+    #[inline]
     fn integral(&self, knot: Knot) -> Self::IntegralOf {
         let mut indef = self.indefinite();
         indef.translate(knot.y - indef.evaluate(knot.x));
@@ -92,10 +100,12 @@ where
     T: AbsDiffEq<Epsilon = f64>,
 {
     type Epsilon = f64;
+    #[inline]
     fn default_epsilon() -> Self::Epsilon {
         <Self::Epsilon as AbsDiffEq>::default_epsilon()
     }
 
+    #[inline]
     fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
         self.end.abs_diff_eq(&other.end, eps) && self.poly.abs_diff_eq(&other.poly, eps)
     }
@@ -105,10 +115,12 @@ impl<T> RelativeEq for Segment<T>
 where
     T: AbsDiffEq<Epsilon = f64> + RelativeEq,
 {
+    #[inline]
     fn default_max_relative() -> Self::Epsilon {
         <Self::Epsilon as RelativeEq>::default_max_relative()
     }
 
+    #[inline]
     fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
         self.end.relative_eq(&other.end, eps, max_relative)
             && self.poly.relative_eq(&other.poly, eps, max_relative)
@@ -204,10 +216,12 @@ where
     T: PartialEq + AbsDiffEq<Epsilon = f64>,
 {
     type Epsilon = f64;
+    #[inline]
     fn default_epsilon() -> Self::Epsilon {
         <Self::Epsilon as AbsDiffEq>::default_epsilon()
     }
 
+    #[inline]
     fn abs_diff_eq(&self, other: &Self, eps: Self::Epsilon) -> bool {
         self.segments.abs_diff_eq(&other.segments, eps)
     }
@@ -217,10 +231,12 @@ impl<T> RelativeEq for Piecewise<T>
 where
     T: AbsDiffEq<Epsilon = f64> + RelativeEq,
 {
+    #[inline]
     fn default_max_relative() -> Self::Epsilon {
         <Self::Epsilon as RelativeEq>::default_max_relative()
     }
 
+    #[inline]
     fn relative_eq(&self, other: &Self, eps: Self::Epsilon, max_relative: Self::Epsilon) -> bool {
         self.segments
             .relative_eq(&other.segments, eps, max_relative)
@@ -228,6 +244,7 @@ where
 }
 
 impl<T> Default for Piecewise<T> {
+    #[inline]
     fn default() -> Self {
         Piecewise {
             segments: Vec::new(),
@@ -240,6 +257,7 @@ where
     Segment<T>: Mul<f64, Output = Segment<T>> + Copy,
 {
     type Output = Self;
+    #[inline]
     fn mul(mut self, rhs: f64) -> Self::Output {
         for seg in &mut self.segments {
             *seg = *seg * rhs;
@@ -252,6 +270,7 @@ impl<T: MulAssign<f64>> MulAssign<f64> for Piecewise<T>
 where
     Segment<T>: MulAssign<f64>,
 {
+    #[inline]
     fn mul_assign(&mut self, rhs: f64) {
         for mut seg in &mut self.segments {
             seg *= rhs;
@@ -264,6 +283,7 @@ where
     T: Neg<Output = T> + Copy,
 {
     type Output = Self;
+    #[inline]
     fn neg(mut self) -> Self::Output {
         for seg in &mut self.segments {
             seg.poly = seg.poly.neg();
@@ -277,6 +297,7 @@ where
     &'a T: Add<&'b T, Output = T>,
 {
     type Output = Piecewise<T>;
+    #[inline]
     fn add(self, other: &'b Piecewise<T>) -> Self::Output {
         let mut res = Vec::with_capacity(self.segments.len() + other.segments.len() - 1);
 
@@ -356,6 +377,7 @@ impl<'a, T: Evaluate> PiecewiseEvaluator<'a, T> {
     ///
     /// Assumes that segments are sorted properly: you won't get undefined
     /// behaviour if they aren't, but the results might be strange.
+    #[inline]
     pub fn new(segments: &'a [Segment<T>]) -> Self {
         let (last, front) = segments.split_last().expect("no segments to pick from");
         PiecewiseEvaluator {
@@ -371,6 +393,7 @@ impl<'a, T: Evaluate> PiecewiseEvaluator<'a, T> {
     // Does not live in Evaluated as types differ in mutability. I
     // think the evaluate API needs fixing to support this with
     // instances for references.
+    #[inline]
     pub fn evaluate(&mut self, x: f64) -> f64 {
         // If the new evaluation is for value higher than previous
         // one, we want to start searching for the segment from the
@@ -455,6 +478,7 @@ impl<'a, T: Evaluate> PiecewiseEvaluator<'a, T> {
 }
 
 impl<T: Evaluate> Evaluate for Piecewise<T> {
+    #[inline]
     fn evaluate(&self, x: f64) -> f64 {
         assert!(!self.segments.is_empty(), "no segments to pick from");
         match self.segments.iter().position(|seg| seg.end > x) {
@@ -470,6 +494,7 @@ where
     &'a T: Sub<&'b T, Output = T>,
 {
     type Output = Piecewise<T>;
+    #[inline]
     fn sub(self, other: &'b Piecewise<T>) -> Self::Output {
         let mut res = Vec::with_capacity(self.segments.len() + other.segments.len() - 1);
 
@@ -533,6 +558,7 @@ impl<T: Evaluate> Piecewise<T> {
     /// points. When the latter is sufficiently densely wrt the
     /// former, this is faster than doing a binary search of the
     /// segments every time, as evaluate does.
+    #[inline]
     pub fn evaluate_v<'a, 'b, I>(&'a self, xs: I) -> impl Iterator<Item = f64> + 'a
     where
         I: IntoIterator<Item = f64>,
@@ -561,6 +587,7 @@ where
     T: HasDerivative,
 {
     type DerivativeOf = Piecewise<T::DerivativeOf>;
+    #[inline]
     fn derivative(&self) -> Self::DerivativeOf {
         Piecewise {
             segments: self.segments.iter().map(|seg| seg.derivative()).collect(),
@@ -574,6 +601,7 @@ where
     T::IntegralOf: Translate,
 {
     type IntegralOf = Piecewise<T::IntegralOf>;
+    #[inline]
     fn indefinite(&self) -> Self::IntegralOf {
         if self.segments.is_empty() {
             return Default::default();
@@ -597,6 +625,7 @@ where
     }
 
     // TODO: slow when using iter!
+    #[inline]
     fn integral(&self, knot0: Knot) -> Self::IntegralOf {
         // Slightly slower than manually inlined version... but only slightly;
         // perhaps come back to this.
@@ -607,6 +636,7 @@ where
 }
 
 impl<T: Translate> Translate for Piecewise<T> {
+    #[inline]
     fn translate(&mut self, v: f64) {
         for seg in &mut self.segments {
             seg.translate(v);
