@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use std::ops::{Add, Mul, MulAssign, Neg};
 
 /// A join-point between two functions
-#[derive(Debug, PartialEq, Clone, Copy, Arbitrary, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Clone, Copy, Arbitrary, Serialize, Deserialize, Default)]
 #[cfg_attr(
     feature = "borsh",
     derive(borsh::BorshDeserialize, borsh::BorshSerialize)
