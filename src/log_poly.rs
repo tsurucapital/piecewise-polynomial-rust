@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use std::ops::{Add, Mul, MulAssign, Neg, Sub};
 
 /// Polynomial of natural log of x
-#[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize, Default)]
 #[cfg_attr(
     feature = "borsh",
     derive(borsh::BorshDeserialize, borsh::BorshSerialize)

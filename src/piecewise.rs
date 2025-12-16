@@ -11,7 +11,7 @@ use std::ops::{Add, Mul, MulAssign, Neg, Sub};
 /// A segment is valid for _begin_ ≤ `x` < `end`, where _begin_ is implied
 /// by the previous segment if it exists, or for `x` < `end` if this is the
 /// first segment.
-#[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Clone, Copy, Serialize, Deserialize, Default)]
 #[cfg_attr(
     feature = "borsh",
     derive(borsh::BorshDeserialize, borsh::BorshSerialize)
