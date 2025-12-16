@@ -1,6 +1,6 @@
 [package]
 name = "piecewise_polynomial"
-version = "0.2.2"
+version = "0.2.3"
 authors = ["Mateusz Kowalczyk <fuuzetsu@fuuzetsu.co.uk>"]
 edition = "2018"
 license = "BSD-3-Clause"
